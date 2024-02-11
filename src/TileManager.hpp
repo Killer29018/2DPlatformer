@@ -13,7 +13,7 @@ class TileManager : public EventObserver
 
     void generateMap();
 
-    glm::vec2 checkCollision(glm::vec2 position, glm::vec2 size);
+    glm::vec4 checkCollision(glm::vec2 previousPosition, glm::vec2 size, glm::vec2 velocity);
 
     void receiveEvent(const Event* event) override;
 

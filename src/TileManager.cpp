@@ -2,6 +2,9 @@
 
 #include "Camera.hpp"
 
+#include "AABB.hpp"
+#include <iterator>
+
 Shader TileManager::s_Shader;
 bool TileManager::s_Initialized = false;
 
@@ -12,72 +15,88 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-        {  { 0.0f, 0.0f }, { 1, 1 }}, //
-        {  { 1.0f, 1.0f }, { 2, 1 }}, //
-        {  { 0.0f, 0.0f }, { 2, 1 }}, //
-        {  { 0.0f, 2.0f }, { 2, 2 }}, //
-        { { -1.0f, 4.0f }, { 3, 3 }}, //
-        { { -2.0f, 7.0f }, { 5, 5 }}, //
-        {{ -2.0f, 12.0f }, { 7, 7 }}, //
-        {  { 3.0f, 7.0f }, { 3, 4 }}, //
+  // {   { 1.0f, 1.0f },  { 2, 1 }}, //
+        {   { 0.0f, 2.0f },  { 2, 2 }}, //
+        {  { -1.0f, 4.0f },  { 3, 3 }}, //
+        {  { -2.0f, 7.0f },  { 5, 5 }}, //
+        {  { 0.0f, -3.0f }, { 10, 3 }},
+        {{ -10.0f, -3.0f }, { 10, 3 }},
+        {   { 5.0f, 3.0f },  { 2, 1 }},
+        {   { 7.0f, 6.0f },  { 2, 1 }},
+        {   { 7.0f, 6.0f },  { 2, 1 }},
     };
 }
 
-glm::vec2 TileManager::checkCollision(glm::vec2 position, glm::vec2 size)
+glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size,
+                                      glm::vec2 velocity)
 {
-    glm::vec4 boundingBox = { position.x, position.y, position.x + size.x, position.y + size.y };
-
-    for (Tile& t : m_Tiles)
+    glm::vec4 afterBoundingBox = { previousPosition.x + velocity.x, previousPosition.y + velocity.y,
+                                   size.x, size.y };
+    const int iterations = 2;
+    for (int i = 0; i < iterations; i++)
     {
-        t.collided = 0;
-    }
-
-    for (Tile& t : m_Tiles)
-    {
-        glm::vec3 position = t.getWorldPosition();
-        glm::vec2 size = t.getWorldSize();
-
-        float EPS = 0.0001;
-
-        glm::vec4 tileBoundingBox = { position.x, position.y, position.x + size.x,
-                                      position.y + size.y };
-
-        if (boundingBox.x < tileBoundingBox.z && boundingBox.z > tileBoundingBox.x &&
-            boundingBox.y < tileBoundingBox.w && boundingBox.w > tileBoundingBox.y)
+        for (Tile& t : m_Tiles)
         {
-            t.collided = 1;
-
-            float xOffset = 0;
-            float yOffset = 0;
-
-            float xLeft = tileBoundingBox.x - boundingBox.z;
-            float xRight = tileBoundingBox.z - boundingBox.x;
-
-            float yUp = tileBoundingBox.w - boundingBox.y;
-            float yDown = tileBoundingBox.y - boundingBox.w;
-
-            if (fabs(xLeft) < fabs(xRight))
-                xOffset = xLeft - EPS;
-            else
-                xOffset = xRight + EPS;
-
-            if (fabs(yUp) < fabs(yDown))
-                yOffset = yUp + EPS;
-            else
-                yOffset = yDown - EPS;
-
-            if (yOffset < xOffset && fabs(yOffset) > EPS)
-                xOffset = 0;
-            else
-                yOffset = 0;
-
-            static uint32_t count = 0;
-            printf("Collision: %d\n", count++);
-
-            return { xOffset, yOffset };
+            t.collided = 0;
         }
+
+        float xOffset = 0;
+        float yOffset = 0;
+        const float overlapThreshold = size.y / 8;
+        bool collision = false;
+
+        for (Tile& t : m_Tiles)
+        {
+            glm::vec3 position = t.getWorldPosition();
+            glm::vec2 size = t.getWorldSize();
+
+            glm::vec4 tileBoundingBox = { position.x, position.y, size.x, size.y };
+
+            if (AABB::collision(afterBoundingBox, tileBoundingBox))
+            {
+                t.collided = 1;
+
+                if (velocity.x < 0)
+                {
+                    xOffset = (tileBoundingBox.x + tileBoundingBox.z) - afterBoundingBox.x;
+                }
+                else
+                {
+                    xOffset = tileBoundingBox.x - (afterBoundingBox.x + afterBoundingBox.z);
+                }
+
+                if (velocity.y < 0)
+                {
+                    yOffset = (tileBoundingBox.y + tileBoundingBox.w) - (afterBoundingBox.y);
+                }
+                else
+                {
+                    yOffset = -(afterBoundingBox.y + afterBoundingBox.w) + (tileBoundingBox.y);
+                }
+
+                collision = true;
+            }
+        }
+
+        if (collision)
+        {
+            if (fabs(yOffset) < fabs(xOffset))
+            {
+                velocity.y = 0;
+                xOffset = 0;
+            }
+            else
+            {
+                velocity.x = 0;
+                yOffset = 0;
+            }
+        }
+
+        afterBoundingBox.x += xOffset;
+        afterBoundingBox.y += yOffset;
     }
-    return { 0.0f, 0.0f };
+
+    return glm::vec4{ afterBoundingBox.x, afterBoundingBox.y, velocity.x, velocity.y };
 }
 
 void TileManager::receiveEvent(const Event* event)
