@@ -3,6 +3,7 @@
 #include "EventHandler.hpp"
 #include "Events.hpp"
 #include "Shader.hpp"
+#include "TextureMap.hpp"
 #include "Tile.hpp"
 #include <vector>
 
@@ -22,6 +23,8 @@ class TileManager : public EventObserver
 
     static Shader s_Shader;
     static bool s_Initialized;
+
+    TextureMap m_TextureMap;
 
   private:
     static void generateShader();

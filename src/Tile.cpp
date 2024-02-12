@@ -8,21 +8,17 @@ uint32_t Tile::s_VAO;
 uint32_t Tile::s_VBO;
 bool Tile::s_TileInitialized = false;
 
-Tile::Tile() { m_Position = glm::vec3(0.0, 0.0, 0.0); }
+Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_TileMap(TileMap::NONE) {}
 
-Tile::Tile(glm::vec2 position, float depth)
+Tile::Tile(glm::vec2 position, TileMap map, float depth)
+    : m_Position(position.x, position.y, depth), m_BlockSize(1, 1), m_TileMap(map)
 {
-    m_Position = glm::vec3(position.x, position.y, depth);
-    m_BlockSize = glm::ivec2(1, 1);
-
     generateMesh();
 }
 
-Tile::Tile(glm::vec2 position, glm::ivec2 blockSize, float depth)
+Tile::Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth)
+    : m_Position(position.x, position.y, 0.0), m_BlockSize(blockSize), m_TileMap(map)
 {
-    m_Position = glm::vec3(position.x, position.y, depth);
-    m_BlockSize = blockSize;
-
     generateMesh();
 }
 
@@ -36,12 +32,9 @@ void Tile::render(Shader& shader)
 
     shader.setMat4("u_Model", model);
     shader.setInt("u_Collision", collided);
-    shader.setInt("u_Row", rand() % 2);
-    shader.setInt("u_Col", rand() % 2);
-    // shader.setInt("u_WidthMul", 1);
-    // shader.setInt("u_HeightMul", 1);
-    shader.setInt("u_WidthMul", m_BlockSize.x);
-    shader.setInt("u_HeightMul", m_BlockSize.y);
+    shader.setInt("u_TileIndex", static_cast<int>(m_TileMap));
+
+    shader.setIVec2("u_TileSize", m_BlockSize);
 
     glBindVertexArray(s_VAO);
 

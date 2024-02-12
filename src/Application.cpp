@@ -32,16 +32,15 @@ void Application::initialize()
     m_Player = Player(&m_Camera, &m_Tiles);
 
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
-    m_Texture.compileFromPath("res/textures/Temp2.png", 2, 2);
 
     m_Window.attach(&m_Player);
-    attach(&m_Player);
     attach(&m_Tiles);
+    attach(&m_Player);
 
     m_Tiles.generateMap();
 
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 void Application::mainLoop()
@@ -63,9 +62,6 @@ void Application::mainLoop()
 
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        m_Texture.bind();
-        m_Texture.activeTexture(GL_TEXTURE0);
 
         RenderEvent render;
         render.camera = &m_Camera;

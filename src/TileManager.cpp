@@ -17,15 +17,17 @@ void TileManager::generateMap()
 
     m_Tiles = {
   // {   { 1.0f, 1.0f },  { 2, 1 }}, //
-        {   { 0.0f, 2.0f },  { 2, 2 }}, //
-        {  { -1.0f, 4.0f },  { 3, 3 }}, //
-        {  { -2.0f, 7.0f },  { 5, 5 }}, //
-        {  { 0.0f, -3.0f }, { 10, 3 }},
-        {{ -10.0f, -3.0f }, { 10, 3 }},
-        {   { 5.0f, 3.0f },  { 2, 1 }},
-        {   { 7.0f, 6.0f },  { 2, 1 }},
-        {   { 7.0f, 6.0f },  { 2, 1 }},
+        {   { 0.0f, 2.0f },  { 2, 2 },  TileMap::DIRT}, //
+        {  { -1.0f, 4.0f },  { 3, 3 }, TileMap::STONE}, //
+        {  { -2.0f, 7.0f },  { 5, 5 }, TileMap::GRASS}, //
+        {  { 0.0f, -3.0f }, { 10, 3 }, TileMap::STONE},
+        {{ -10.0f, -3.0f }, { 10, 3 },  TileMap::DIRT},
+        {   { 5.0f, 3.0f },  { 2, 1 },  TileMap::MOSS},
+        {   { 7.0f, 6.0f },  { 2, 1 }, TileMap::GRASS},
+        {   { 7.0f, 6.0f },  { 2, 1 }, TileMap::STONE},
     };
+
+    m_TextureMap.compileFromPath("res/textures/Temp2.png", 2, 2);
 }
 
 glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size,
@@ -59,8 +61,8 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
                 glm::vec2 offsets =
                     AABB::calculateOffsets(afterBoundingBox, tileBoundingBox, velocity);
 
-                xOffset = offsets.x;
-                yOffset = offsets.y;
+                xOffset += offsets.x;
+                yOffset += offsets.y;
 
                 collision = true;
             }
@@ -93,7 +95,7 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
 
 void TileManager::receiveEvent(const Event* event)
 {
-    srand(time(0));
+    srand(0);
     switch (event->getType())
     {
     case EventType::Render:
@@ -102,10 +104,11 @@ void TileManager::receiveEvent(const Event* event)
 
             s_Shader.bind();
 
+            m_TextureMap.bind();
+
             s_Shader.setMat4("u_View", renderEvent->camera->getViewMatrix());
             s_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
-            s_Shader.setInt("u_TotalRows", 2);
-            s_Shader.setInt("u_TotalCols", 2);
+            s_Shader.setIVec2("u_TilemapSize", m_TextureMap.getDimensions());
 
             for (Tile& t : m_Tiles)
             {

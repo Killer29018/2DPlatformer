@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Shader.hpp"
+#include "TileMapping.hpp"
 
 class Tile
 {
@@ -12,8 +13,8 @@ class Tile
     int collided = 0;
 
     Tile();
-    Tile(glm::vec2 position, float depth = 0.0);
-    Tile(glm::vec2 position, glm::ivec2 blockSize, float depth = 0.0);
+    Tile(glm::vec2 position, TileMap map, float depth = 0.0);
+    Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth = 0.0);
 
     void render(Shader& shader);
 
@@ -28,6 +29,8 @@ class Tile
   private:
     glm::vec3 m_Position;
     glm::ivec2 m_BlockSize;
+
+    TileMap m_TileMap;
 
     static uint32_t s_VertexCount;
     static uint32_t s_VAO;

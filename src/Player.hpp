@@ -18,16 +18,17 @@ class Player : public EventObserver
     glm::vec3 m_Position;
     glm::vec3 m_Vel;
     glm::vec3 m_Acc;
-    glm::vec3 m_Gravity = { 0.0, -20, 0.0 };
+    glm::vec3 m_Gravity = { 0.0, -10, 0.0 };
 
     Shader m_Shader;
+    Texture2D m_Texture;
     Tile m_Tile;
 
-    float m_Damping = 0.8f;
+    float m_Damping = 0.9f;
 
     bool m_OnGround = true;
     float m_MovementSpeed = 20.0f;
-    float m_JumpSpeed = 20.0f;
+    float m_JumpSpeed = 10.0f;
 
     std::unordered_map<int32_t, bool> m_PressedKeys;
 

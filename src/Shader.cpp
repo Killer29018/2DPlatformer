@@ -67,6 +67,11 @@ void Shader::setInt(const std::string& name, int value)
     glUniform1i(getUniformLocation(name), value);
 }
 
+void Shader::setIVec2(const std::string& name, const glm::ivec2& value)
+{
+    glUniform2i(getUniformLocation(name), value.x, value.y);
+}
+
 void Shader::setVec2(const std::string& name, const glm::vec2& value)
 {
     glUniform2f(getUniformLocation(name), value.x, value.y);

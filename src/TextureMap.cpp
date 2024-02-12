@@ -26,6 +26,7 @@ void TextureMap::bind()
 void TextureMap::unbind() { Texture2D::unbind(); }
 
 glm::ivec2 TextureMap::getSize() { return m_Texture.getSize(); }
+glm::ivec2 TextureMap::getDimensions() { return glm::ivec2{ m_Cols, m_Rows }; }
 glm::ivec2 TextureMap::getTileSize()
 {
     glm::ivec2 entireSize = getSize();

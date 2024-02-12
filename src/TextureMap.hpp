@@ -17,6 +17,7 @@ class TextureMap
     static void activeTexture(uint32_t texture) { glActiveTexture(texture); }
 
     glm::ivec2 getSize();
+    glm::ivec2 getDimensions();
     glm::ivec2 getTileSize();
 
   private:

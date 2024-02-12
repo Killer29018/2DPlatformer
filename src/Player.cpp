@@ -12,8 +12,9 @@ Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(t
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
 
-    m_Tile = Tile({ 0.0f, 0.0f }, { 1, 2 });
-    m_Shader.compileFromPath("res/shaders/tile.vert.glsl", "res/shaders/tile.frag.glsl");
+    m_Tile = Tile({ 0.0f, 0.0f }, { 1, 2 }, TileMap::DIRT);
+    m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
+    m_Texture.compileFromPath("res/textures/Temp.png");
 }
 
 void Player::receiveEvent(const Event* event)
@@ -72,7 +73,7 @@ void Player::receiveEvent(const Event* event)
             m_Vel *= m_Damping;
 
             glm::vec4 positionVelocity = m_Tiles->checkCollision(
-                m_Position, glm::vec2{ Tile::s_TileSize, Tile::s_TileSize * 2 },
+                m_Position, glm::vec2{ Tile::s_TileSize * 0.99, Tile::s_TileSize * 1.99 },
                 m_Vel * updateEvent->dt);
 
             if (m_Position.y == positionVelocity.y)
@@ -94,8 +95,13 @@ void Player::receiveEvent(const Event* event)
         {
             RenderEvent* renderEvent = (RenderEvent*)event;
 
-            m_Shader.setMat4("u_view", renderEvent->camera->getViewMatrix());
-            m_Shader.setMat4("u_projection", renderEvent->camera->getProjectionMatrix());
+            m_Shader.bind();
+
+            m_Texture.bind();
+            m_Texture.activeTexture(GL_TEXTURE0);
+
+            m_Shader.setMat4("u_View", renderEvent->camera->getViewMatrix());
+            m_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
 
             m_Tile.render(m_Shader);
 
