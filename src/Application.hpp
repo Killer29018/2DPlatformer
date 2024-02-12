@@ -4,6 +4,7 @@
 #include "EventHandler.hpp"
 #include "Player.hpp"
 #include "Shader.hpp"
+#include "TextureMap.hpp"
 #include "TileManager.hpp"
 #include "Window.hpp"
 
@@ -24,6 +25,7 @@ class Application : public EventDispatcher, public EventObserver
     Window m_Window;
 
     Shader m_Shader;
+    TextureMap m_Texture;
     Camera m_Camera;
 
   private:

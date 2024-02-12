@@ -43,6 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${linker} PUBLIC
     OpenGL::GL
     glm::glm
     glfw
+    STB
 )
 
 set (InputRes "${PROJECT_SOURCE_DIR}/res")

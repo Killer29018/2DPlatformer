@@ -29,3 +29,9 @@ set_target_properties(glfw PROPERTIES FOLDER vendor)
 #     glfw
 #     OpenGL::GL
 # )
+
+project (STB LANGUAGES CXX)
+file(GLOB_RECURSE stbFiles CONFIGURE_DEPENDS "stb/*.h")
+add_library(STB STATIC ${stbFiles})
+target_include_directories(STB PUBLIC "stb/")
+set_target_properties(STB PROPERTIES LINKER_LANGUAGE CXX)

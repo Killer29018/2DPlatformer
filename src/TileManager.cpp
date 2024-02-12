@@ -3,6 +3,7 @@
 #include "Camera.hpp"
 
 #include "AABB.hpp"
+#include "glm/fwd.hpp"
 #include <iterator>
 
 Shader TileManager::s_Shader;
@@ -42,7 +43,6 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
 
         float xOffset = 0;
         float yOffset = 0;
-        const float overlapThreshold = size.y / 8;
         bool collision = false;
 
         for (Tile& t : m_Tiles)
@@ -56,23 +56,11 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
             {
                 t.collided = 1;
 
-                if (velocity.x < 0)
-                {
-                    xOffset = (tileBoundingBox.x + tileBoundingBox.z) - afterBoundingBox.x;
-                }
-                else
-                {
-                    xOffset = tileBoundingBox.x - (afterBoundingBox.x + afterBoundingBox.z);
-                }
+                glm::vec2 offsets =
+                    AABB::calculateOffsets(afterBoundingBox, tileBoundingBox, velocity);
 
-                if (velocity.y < 0)
-                {
-                    yOffset = (tileBoundingBox.y + tileBoundingBox.w) - (afterBoundingBox.y);
-                }
-                else
-                {
-                    yOffset = -(afterBoundingBox.y + afterBoundingBox.w) + (tileBoundingBox.y);
-                }
+                xOffset = offsets.x;
+                yOffset = offsets.y;
 
                 collision = true;
             }
@@ -91,6 +79,10 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
                 yOffset = 0;
             }
         }
+        else
+        {
+            break;
+        }
 
         afterBoundingBox.x += xOffset;
         afterBoundingBox.y += yOffset;
@@ -101,16 +93,20 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
 
 void TileManager::receiveEvent(const Event* event)
 {
+    srand(time(0));
     switch (event->getType())
     {
     case EventType::Render:
         {
             RenderEvent* renderEvent = (RenderEvent*)event;
 
+            s_Shader.bind();
+
             s_Shader.setMat4("u_View", renderEvent->camera->getViewMatrix());
             s_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
+            s_Shader.setInt("u_TotalRows", 2);
+            s_Shader.setInt("u_TotalCols", 2);
 
-            s_Shader.bind();
             for (Tile& t : m_Tiles)
             {
                 t.render(s_Shader);

@@ -3,9 +3,8 @@
 #include "glad/gl.h"
 
 #include <exception>
-#include <sstream>
-
 #include <iostream>
+#include <sstream>
 
 uint32_t Shader::getID()
 {

@@ -36,6 +36,12 @@ void Tile::render(Shader& shader)
 
     shader.setMat4("u_Model", model);
     shader.setInt("u_Collision", collided);
+    shader.setInt("u_Row", rand() % 2);
+    shader.setInt("u_Col", rand() % 2);
+    // shader.setInt("u_WidthMul", 1);
+    // shader.setInt("u_HeightMul", 1);
+    shader.setInt("u_WidthMul", m_BlockSize.x);
+    shader.setInt("u_HeightMul", m_BlockSize.y);
 
     glBindVertexArray(s_VAO);
 
@@ -75,12 +81,12 @@ void Tile::generateMesh()
     glBindBuffer(GL_ARRAY_BUFFER, s_VBO);
 
     std::vector<float> vertices = {
-        0.0, 0.0, 0.0f, 0.0f, //
-        0.0, 1.0, 0.0f, 1.0f, //
-        1.0, 1.0, 1.0f, 1.0f, //
-        0.0, 0.0, 0.0f, 0.0f, //
-        1.0, 1.0, 1.0f, 1.0f, //
-        1.0, 0.0, 1.0f, 0.0f, //
+        0.0, 0.0, 0.0f, 1.0f, //
+        0.0, 1.0, 0.0f, 0.0f, //
+        1.0, 1.0, 1.0f, 0.0f, //
+        0.0, 0.0, 0.0f, 1.0f, //
+        1.0, 1.0, 1.0f, 0.0f, //
+        1.0, 0.0, 1.0f, 1.0f, //
     };
 
     s_VertexCount = 6;

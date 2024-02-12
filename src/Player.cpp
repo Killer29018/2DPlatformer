@@ -8,7 +8,7 @@ Player::Player() : m_Camera(nullptr) {}
 
 Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(tiles)
 {
-    m_Position = glm::vec3(0.5, 0, 1);
+    m_Position = glm::vec3(0.5, 0.1, 1);
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
 
@@ -77,7 +77,6 @@ void Player::receiveEvent(const Event* event)
 
             if (m_Position.y == positionVelocity.y)
             {
-                printf("Onground\n");
                 m_OnGround = true;
             }
 
