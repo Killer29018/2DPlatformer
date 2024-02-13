@@ -1,8 +1,6 @@
 #include "Camera.hpp"
 
 #include "Events.hpp"
-#include "GLFW/glfw3.h"
-#include <unordered_map>
 
 Camera::Camera() : m_WindowSize({ 0, 0 }), m_Position({ 0.0f, 0.0f, 0.0f }) {}
 

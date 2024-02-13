@@ -18,6 +18,11 @@ class Camera
     glm::mat4 getProjectionMatrix() const;
 
     void setPosition(glm::vec3 position) { m_Position = position; }
+    void setXYPosition(glm::vec2 position)
+    {
+        m_Position.x = position.x;
+        m_Position.y = position.y;
+    }
 
   private:
     glm::ivec2 m_WindowSize;

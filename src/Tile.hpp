@@ -10,8 +10,6 @@ class Tile
   public:
     static float s_TileSize;
 
-    int collided = 0;
-
     Tile();
     Tile(glm::vec2 position, TileMap map, float depth = 0.0);
     Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth = 0.0);

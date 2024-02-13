@@ -31,7 +31,6 @@ void Tile::render(Shader& shader)
         model, glm::vec3(m_Position.x / m_BlockSize.x, m_Position.y / m_BlockSize.y, 0.0));
 
     shader.setMat4("u_Model", model);
-    shader.setInt("u_Collision", collided);
     shader.setInt("u_TileIndex", static_cast<int>(m_TileMap));
 
     shader.setIVec2("u_TileSize", m_BlockSize);

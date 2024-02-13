@@ -16,15 +16,14 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-  // {   { 1.0f, 1.0f },  { 2, 1 }}, //
-        {   { 0.0f, 2.0f },  { 2, 2 },  TileMap::DIRT}, //
-        {  { -1.0f, 4.0f },  { 3, 3 }, TileMap::STONE}, //
-        {  { -2.0f, 7.0f },  { 5, 5 }, TileMap::GRASS}, //
+        {   { 0.0f, 2.0f },  { 2, 2 },  TileMap::DIRT},
+        {  { -1.0f, 4.0f },  { 3, 3 }, TileMap::STONE},
+        {  { -2.0f, 7.0f },  { 5, 5 }, TileMap::GRASS},
         {  { 0.0f, -3.0f }, { 10, 3 }, TileMap::STONE},
         {{ -10.0f, -3.0f }, { 10, 3 },  TileMap::DIRT},
         {   { 5.0f, 3.0f },  { 2, 1 },  TileMap::MOSS},
-        {   { 7.0f, 6.0f },  { 2, 1 }, TileMap::GRASS},
         {   { 7.0f, 6.0f },  { 2, 1 }, TileMap::STONE},
+        { { 10.0f, -3.0f }, { 50, 1 }, TileMap::STONE},
     };
 
     m_TextureMap.compileFromPath("res/textures/Temp2.png", 2, 2);
@@ -38,11 +37,6 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
     const int iterations = 2;
     for (int i = 0; i < iterations; i++)
     {
-        for (Tile& t : m_Tiles)
-        {
-            t.collided = 0;
-        }
-
         float xOffset = 0;
         float yOffset = 0;
         bool collision = false;
@@ -56,8 +50,6 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
 
             if (AABB::collision(afterBoundingBox, tileBoundingBox))
             {
-                t.collided = 1;
-
                 glm::vec2 offsets =
                     AABB::calculateOffsets(afterBoundingBox, tileBoundingBox, velocity);
 

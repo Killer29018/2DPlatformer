@@ -25,7 +25,7 @@ void Application::receiveEvent(const Event* event) {}
 void Application::initialize()
 {
     m_Camera = Camera{
-        m_Window.getSize(), {0.0f, 0.0f, 0.0f}
+        m_Window.getSize(), {0.0f, 0.0f, 10.0f}
     };
     m_Window.setInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -34,8 +34,8 @@ void Application::initialize()
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
 
     m_Window.attach(&m_Player);
-    attach(&m_Tiles);
     attach(&m_Player);
+    attach(&m_Tiles);
 
     m_Tiles.generateMap();
 

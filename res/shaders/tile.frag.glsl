@@ -4,10 +4,7 @@ in vec2 v_Texcoords;
 
 out vec4 f_Colour;
 
-uniform int u_Collision;
-
 uniform ivec2 u_TilemapSize;
-// uniform ivec2 u_TilemapPosition;
 uniform int u_TileIndex;
 
 uniform ivec2 u_TileSize;
@@ -25,13 +22,5 @@ void main()
 
     texCoords = (texCoords * tileSize) + tileSize * tilePosition;
 
-    if (u_Collision <= 0)
-    {
-        // f_Colour = vec4(texCoords, 0.0, 1.0);
-        f_Colour = texture(u_Texture, texCoords);
-    }
-    else
-    {
-        f_Colour = vec4(1.0, 0.0, 0.0, 1.0);
-    }
+    f_Colour = texture(u_Texture, texCoords);
 }
