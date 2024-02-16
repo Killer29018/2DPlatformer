@@ -28,7 +28,7 @@ class Tile
     glm::vec3 m_Position;
     glm::ivec2 m_BlockSize;
 
-    TileMap m_TileMap;
+    TileMap m_TileType;
 
     static uint32_t s_VertexCount;
     static uint32_t s_VAO;

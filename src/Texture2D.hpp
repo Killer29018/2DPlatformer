@@ -54,7 +54,7 @@ class Texture2D
     uint32_t m_MinFilter = GL_LINEAR;
     uint32_t m_MagFilter = GL_LINEAR;
 
-    uint32_t m_InternalFormat = GL_RGB;
+    uint32_t m_InternalFormat = GL_RGBA;
 
     glm::ivec2 m_Size;
     uint32_t m_Channels;

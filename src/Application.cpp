@@ -40,7 +40,9 @@ void Application::initialize()
     m_Tiles.generateMap();
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 void Application::mainLoop()

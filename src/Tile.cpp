@@ -8,16 +8,16 @@ uint32_t Tile::s_VAO;
 uint32_t Tile::s_VBO;
 bool Tile::s_TileInitialized = false;
 
-Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_TileMap(TileMap::NONE) {}
+Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_TileType(TileMap::NONE) {}
 
 Tile::Tile(glm::vec2 position, TileMap map, float depth)
-    : m_Position(position.x, position.y, depth), m_BlockSize(1, 1), m_TileMap(map)
+    : m_Position(position.x, position.y, depth), m_BlockSize(1, 1), m_TileType(map)
 {
     generateMesh();
 }
 
 Tile::Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth)
-    : m_Position(position.x, position.y, 0.0), m_BlockSize(blockSize), m_TileMap(map)
+    : m_Position(position.x, position.y, 0.0), m_BlockSize(blockSize), m_TileType(map)
 {
     generateMesh();
 }
@@ -31,7 +31,7 @@ void Tile::render(Shader& shader)
         model, glm::vec3(m_Position.x / m_BlockSize.x, m_Position.y / m_BlockSize.y, 0.0));
 
     shader.setMat4("u_Model", model);
-    shader.setInt("u_TileIndex", static_cast<int>(m_TileMap));
+    shader.setIVec2("u_TileIndex", TileMapToVec.at(m_TileType));
 
     shader.setIVec2("u_TileSize", m_BlockSize);
 
@@ -65,6 +65,9 @@ void Tile::generateMesh()
     {
         return;
     }
+
+    assert(TileMapToVec.size() == static_cast<int>(TileMap::LAST) &&
+           "Missing TileMapToVec entries or TileMap entries");
 
     glGenVertexArrays(1, &s_VAO);
     glGenBuffers(1, &s_VBO);

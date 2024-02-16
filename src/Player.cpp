@@ -10,7 +10,7 @@ Player::Player() : m_Camera(nullptr) {}
 
 Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(tiles)
 {
-    m_Position = glm::vec3(0.5, 0.1, -1);
+    m_Position = glm::vec3(0.0, 1.0, -1);
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
 
@@ -75,9 +75,8 @@ void Player::receiveEvent(const Event* event)
             glm::vec4 positionVelocity =
                 m_Tiles->checkCollision(m_Position, m_Size, m_Vel * updateEvent->dt);
 
-            // std::cout << std::format("Y: {:.5} NY: {:.5}\n", m_Position.y, positionVelocity.y);
-            std::cout << std::format("VX: {:.5} VY: {:.5}\n", positionVelocity.z,
-                                     positionVelocity.w);
+            // std::cout << std::format("VX: {:.5} VY: {:.5}\n", positionVelocity.z,
+            //                          positionVelocity.w);
             if (m_Position.y == positionVelocity.y)
             {
                 m_OnGround = true;

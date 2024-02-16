@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Texture2D.hpp"
+#include "glad/gl.h"
 
 class TextureMap
 {
@@ -12,16 +13,32 @@ class TextureMap
     void compileFromPath(const char* filename, uint32_t rows, uint32_t cols);
 
     void bind();
-    static void unbind();
+    static void unbind() { glBindTexture(GL_TEXTURE_3D, 0); }
 
     static void activeTexture(uint32_t texture) { glActiveTexture(texture); }
 
-    glm::ivec2 getSize();
-    glm::ivec2 getDimensions();
     glm::ivec2 getTileSize();
+    glm::ivec2 getTileDimensions();
+    glm::ivec2 getTotalSize();
+
+    void setWrap(uint32_t wrapS, uint32_t wrapT);
+    void setFilters(uint32_t min, uint32_t mag);
+    void setInternalFormat(uint32_t format);
 
   private:
-    Texture2D m_Texture;
+    std::optional<uint32_t> m_ID;
 
-    uint32_t m_Rows, m_Cols;
+    glm::ivec2 m_TileDimensions;
+    glm::ivec2 m_TileSize;
+    glm::ivec2 m_TotalSize;
+
+    uint32_t m_Channels;
+
+    uint32_t m_WrapS = GL_REPEAT;
+    uint32_t m_WrapT = GL_REPEAT;
+
+    uint32_t m_MinFilter = GL_NEAREST;
+    uint32_t m_MagFilter = GL_NEAREST;
+
+    uint32_t m_InternalFormat = GL_RGBA;
 };

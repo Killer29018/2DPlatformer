@@ -16,17 +16,20 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-        {   { 0.0f, 2.0f },  { 2, 2 },  TileMap::DIRT},
-        {  { -1.0f, 4.0f },  { 3, 3 }, TileMap::STONE},
-        {  { -2.0f, 7.0f },  { 5, 5 }, TileMap::GRASS},
-        {  { 0.0f, -3.0f }, { 10, 3 }, TileMap::STONE},
-        {{ -10.0f, -3.0f }, { 10, 3 },  TileMap::DIRT},
-        {   { 5.0f, 3.0f },  { 2, 1 },  TileMap::MOSS},
-        {   { 7.0f, 6.0f },  { 2, 1 }, TileMap::STONE},
-        { { 10.0f, -3.0f }, { 50, 1 }, TileMap::STONE},
+        { { -5.0f, 0.0f }, { 1, 1 },      TileMap::STONE_TOP_LEFT},
+        { { -4.0f, 0.0f }, { 9, 1 },    TileMap::STONE_TOP_CENTER},
+        {  { 5.0f, 0.0f }, { 1, 1 },     TileMap::STONE_TOP_RIGHT},
+ //
+        {{ -5.0f, -3.0f }, { 1, 3 },   TileMap::STONE_CENTER_LEFT},
+        {{ -4.0f, -3.0f }, { 9, 3 },        TileMap::STONE_CENTER},
+        { { 5.0f, -3.0f }, { 1, 3 },  TileMap::STONE_CENTER_RIGHT},
+
+        {{ -5.0f, -4.0f }, { 1, 1 },   TileMap::STONE_BOTTOM_LEFT},
+        {{ -4.0f, -4.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER},
+        { { 5.0f, -4.0f }, { 1, 1 },  TileMap::STONE_BOTTOM_RIGHT},
     };
 
-    m_TextureMap.compileFromPath("res/textures/Temp2.png", 2, 2);
+    m_TextureMap.compileFromPath("res/textures/Tilemap.png", 4, 4);
 }
 
 glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size,
@@ -100,7 +103,7 @@ void TileManager::receiveEvent(const Event* event)
 
             s_Shader.setMat4("u_View", renderEvent->camera->getViewMatrix());
             s_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
-            s_Shader.setIVec2("u_TilemapSize", m_TextureMap.getDimensions());
+            s_Shader.setIVec2("u_TilemapSize", m_TextureMap.getTileDimensions());
 
             for (Tile& t : m_Tiles)
             {

@@ -37,8 +37,11 @@ void Texture2D::compileFromPath(const char* filename)
         else if (m_Channels == 4)
             imageFormat = GL_RGBA;
 
+        if (m_Channels) printf("ALpha\n");
+
         glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Size.x, m_Size.y, 0, imageFormat,
                      GL_UNSIGNED_BYTE, data);
+
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
