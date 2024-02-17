@@ -21,6 +21,7 @@ void main()
     vec3 texcoord = vec3(texcoord_2d.xy, tileIndex);
 
     f_Colour = texture(u_Texture, texcoord);
+    // f_Colour = vec4(texcoord, 1.0);
 
     if (f_Colour.a == 0)
         discard;

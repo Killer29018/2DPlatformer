@@ -47,7 +47,7 @@ void Application::initialize()
 
 void Application::mainLoop()
 {
-    float previousTime = 0.0f;
+    float previousTime = glfwGetTime();
     float currentTime;
 
     while (m_Window.isActive())

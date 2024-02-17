@@ -29,11 +29,11 @@ void TileManager::generateMap()
         { { 5.0f, -4.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_RIGHT },
 
         { { 10.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_LEFT, 1.0f },
-        { { 11.f, 3.0f }, { 9, 1 }, TileMap::ABOVE_GRASS_TOP_CENTER, 1.0f },
+        { { 11.0f, 3.0f }, { 9, 1 }, TileMap::ABOVE_GRASS_TOP_CENTER, 1.0f },
         { { 20.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_RIGHT, 1.0f },
 
         { { 10.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_LEFT },
-        { { 11.f, 2.0f }, { 9, 1 }, TileMap::STONE_GRASS_TOP_CENTER },
+        { { 11.0f, 2.0f }, { 9, 1 }, TileMap::STONE_GRASS_TOP_CENTER },
         { { 20.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_RIGHT },
 
         { { 10.0f, -1.0f }, { 1, 3 }, TileMap::STONE_CENTER_LEFT },

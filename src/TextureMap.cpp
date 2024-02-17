@@ -78,6 +78,11 @@ void TextureMap::compileFromPath(const char* filename, uint32_t tileWidth, uint3
             }
         }
 
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, m_MinFilter);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, m_MagFilter);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, m_WrapS);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, m_WrapT);
+
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
     }
     else
