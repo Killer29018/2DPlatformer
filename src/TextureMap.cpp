@@ -20,9 +20,9 @@ uint32_t TextureMap::getID()
         throw texture_existence_error();
 }
 
-void TextureMap::compileFromPath(const char* filename, uint32_t rows, uint32_t cols)
+void TextureMap::compileFromPath(const char* filename, uint32_t tileWidth, uint32_t tileHeight)
 {
-    m_TileDimensions = glm::ivec2{ cols, rows };
+    m_TileSize = glm::ivec2{ tileWidth, tileHeight };
 
     int width;
     int height;
@@ -33,7 +33,7 @@ void TextureMap::compileFromPath(const char* filename, uint32_t rows, uint32_t c
     {
         m_Channels = channels;
         m_TotalSize = glm::ivec2{ width, height };
-        m_TileSize = m_TotalSize / m_TileDimensions;
+        m_TileDimensions = m_TotalSize / m_TileSize;
 
         std::cout << std::format("Total Size: {} : {}\n", m_TotalSize.x, m_TotalSize.y);
         std::cout << std::format("Dimensions: {} : {}\n", m_TileDimensions.x, m_TileDimensions.y);

@@ -17,7 +17,7 @@ Tile::Tile(glm::vec2 position, TileMap map, float depth)
 }
 
 Tile::Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth)
-    : m_Position(position.x, position.y, 0.0), m_BlockSize(blockSize), m_TileType(map)
+    : m_Position(position.x, position.y, depth), m_BlockSize(blockSize), m_TileType(map)
 {
     generateMesh();
 }
@@ -28,7 +28,7 @@ void Tile::render(Shader& shader)
     model =
         glm::scale(model, glm::vec3(m_BlockSize.x * s_TileSize, m_BlockSize.y * s_TileSize, 1.0));
     model = glm::translate(
-        model, glm::vec3(m_Position.x / m_BlockSize.x, m_Position.y / m_BlockSize.y, 0.0));
+        model, glm::vec3(m_Position.x / m_BlockSize.x, m_Position.y / m_BlockSize.y, m_Position.z));
 
     shader.setMat4("u_Model", model);
     shader.setIVec2("u_TileIndex", TileMapToVec.at(m_TileType));

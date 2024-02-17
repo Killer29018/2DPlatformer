@@ -10,7 +10,7 @@ class TextureMap
 
     uint32_t getID();
 
-    void compileFromPath(const char* filename, uint32_t rows, uint32_t cols);
+    void compileFromPath(const char* filename, uint32_t tileWidth, uint32_t tileHeight);
 
     void bind();
     static void unbind() { glBindTexture(GL_TEXTURE_3D, 0); }
@@ -34,8 +34,8 @@ class TextureMap
 
     uint32_t m_Channels;
 
-    uint32_t m_WrapS = GL_REPEAT;
-    uint32_t m_WrapT = GL_REPEAT;
+    uint32_t m_WrapS = GL_CLAMP_TO_EDGE;
+    uint32_t m_WrapT = GL_CLAMP_TO_EDGE;
 
     uint32_t m_MinFilter = GL_NEAREST;
     uint32_t m_MagFilter = GL_NEAREST;

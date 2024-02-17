@@ -14,7 +14,7 @@ class TileManager : public EventObserver
 
     void generateMap();
 
-    glm::vec4 checkCollision(glm::vec2 previousPosition, glm::vec2 size, glm::vec2 velocity);
+    glm::vec4 checkCollision(glm::vec3 previousPosition, glm::vec2 size, glm::vec2 velocity);
 
     void receiveEvent(const Event* event) override;
 
@@ -28,4 +28,6 @@ class TileManager : public EventObserver
 
   private:
     static void generateShader();
+
+    const glm::ivec2 m_TileSize{ 32, 32 };
 };

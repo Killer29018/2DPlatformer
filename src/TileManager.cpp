@@ -16,23 +16,39 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-        { { -5.0f, 0.0f }, { 1, 1 },      TileMap::STONE_TOP_LEFT},
-        { { -4.0f, 0.0f }, { 9, 1 },    TileMap::STONE_TOP_CENTER},
-        {  { 5.0f, 0.0f }, { 1, 1 },     TileMap::STONE_TOP_RIGHT},
- //
-        {{ -5.0f, -3.0f }, { 1, 3 },   TileMap::STONE_CENTER_LEFT},
-        {{ -4.0f, -3.0f }, { 9, 3 },        TileMap::STONE_CENTER},
-        { { 5.0f, -3.0f }, { 1, 3 },  TileMap::STONE_CENTER_RIGHT},
+        { { -5.0f, 0.0f }, { 1, 1 }, TileMap::STONE_TOP_LEFT },
+        { { -4.0f, 0.0f }, { 9, 1 }, TileMap::STONE_TOP_CENTER },
+        { { 5.0f, 0.0f }, { 1, 1 }, TileMap::STONE_TOP_RIGHT },
 
-        {{ -5.0f, -4.0f }, { 1, 1 },   TileMap::STONE_BOTTOM_LEFT},
-        {{ -4.0f, -4.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER},
-        { { 5.0f, -4.0f }, { 1, 1 },  TileMap::STONE_BOTTOM_RIGHT},
+        { { -5.0f, -3.0f }, { 1, 3 }, TileMap::STONE_CENTER_LEFT },
+        { { -4.0f, -3.0f }, { 9, 3 }, TileMap::STONE_CENTER },
+        { { 5.0f, -3.0f }, { 1, 3 }, TileMap::STONE_CENTER_RIGHT },
+
+        { { -5.0f, -4.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_LEFT },
+        { { -4.0f, -4.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER },
+        { { 5.0f, -4.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_RIGHT },
+
+        { { 10.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_LEFT, 1.0f },
+        { { 11.f, 3.0f }, { 9, 1 }, TileMap::ABOVE_GRASS_TOP_CENTER, 1.0f },
+        { { 20.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_RIGHT, 1.0f },
+
+        { { 10.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_LEFT },
+        { { 11.f, 2.0f }, { 9, 1 }, TileMap::STONE_GRASS_TOP_CENTER },
+        { { 20.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_RIGHT },
+
+        { { 10.0f, -1.0f }, { 1, 3 }, TileMap::STONE_CENTER_LEFT },
+        { { 11.0f, -1.0f }, { 9, 3 }, TileMap::STONE_CENTER },
+        { { 20.0f, -1.0f }, { 1, 3 }, TileMap::STONE_CENTER_RIGHT },
+
+        { { 10.0f, -2.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_LEFT },
+        { { 11.0f, -2.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER },
+        { { 20.0f, -2.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_RIGHT },
     };
 
-    m_TextureMap.compileFromPath("res/textures/Tilemap.png", 4, 4);
+    m_TextureMap.compileFromPath("res/textures/Tilemap.png", 32, 32);
 }
 
-glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size,
+glm::vec4 TileManager::checkCollision(glm::vec3 previousPosition, glm::vec2 size,
                                       glm::vec2 velocity)
 {
     glm::vec4 afterBoundingBox = { previousPosition.x + velocity.x, previousPosition.y + velocity.y,
@@ -47,6 +63,9 @@ glm::vec4 TileManager::checkCollision(glm::vec2 previousPosition, glm::vec2 size
         for (Tile& t : m_Tiles)
         {
             glm::vec3 position = t.getWorldPosition();
+
+            if (previousPosition.z != position.z) continue;
+
             glm::vec2 size = t.getWorldSize();
 
             glm::vec4 tileBoundingBox = { position.x, position.y, size.x, size.y };

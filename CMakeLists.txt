@@ -54,7 +54,32 @@ add_custom_target(Resources ALL COMMENT "Copying Resources")
 add_custom_command(
     TARGET Resources POST_BUILD
     COMMAND
+    cmake -E make_directory
+    "${OutputRes}/textures/"
+    COMMENT "Create textures folder at ${OutputRes}"
+)
+
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
+    cmake -E make_directory
+    "${OutputRes}/shaders/"
+    COMMENT "Create shaders folder at ${OutputRes}"
+)
+
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
     cmake -E copy_directory
-    ${InputRes} ${OutputRes}
-    COMMENT "Copied Resources from ${InputRes} To ${OutputRes}"
+    "${InputRes}/shaders/" "${OutputRes}/shaders"
+    COMMENT "Copied Shaders from ${InputRes}/shaders/ To ${OutputRes}/shaders"
+)
+
+file (GLOB RESOURCES_TEXTURES "${InputRes}/textures/*.png")
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
+    cmake -E copy
+    ${RESOURCES_TEXTURES} "${OutputRes}/textures"
+    COMMENT "Copied Textures from ${InputRes}/textures/ To ${OutputRes}/textures"
 )
