@@ -6,7 +6,12 @@
 class TextureMap
 {
   public:
-    TextureMap() {}
+    TextureMap();
+    TextureMap(TextureMap& other) = delete;
+    TextureMap(TextureMap&& other);
+    ~TextureMap();
+
+    TextureMap& operator=(TextureMap&& other);
 
     uint32_t getID();
 

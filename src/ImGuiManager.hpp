@@ -22,7 +22,7 @@ class ImGuiManager : public EventDispatcher, public EventObserver
     void setupStyle();
 
   private:
-    std::unique_ptr<Window> m_Window;
+    Window* m_Window;
 
     ImGuiIO* m_IO;
 };

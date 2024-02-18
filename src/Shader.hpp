@@ -18,7 +18,13 @@ class shader_existence_error : public std::exception
 class Shader
 {
   public:
-    Shader(){};
+    Shader();
+    Shader(Shader& other) = delete;
+    Shader(Shader&& other);
+
+    ~Shader();
+
+    Shader& operator=(Shader&& other);
 
     uint32_t getID();
 

@@ -12,6 +12,30 @@
 
 #include "Texture2D.hpp"
 
+TextureMap::TextureMap() {}
+
+TextureMap::TextureMap(TextureMap&& other) : m_ID(other.m_ID) { other.m_ID.reset(); }
+
+TextureMap::~TextureMap()
+{
+    try
+    {
+        uint32_t id = getID();
+        glDeleteTextures(1, &id);
+    } catch (texture_existence_error e)
+    {
+    }
+}
+
+TextureMap& TextureMap::operator=(TextureMap&& other)
+{
+    m_ID = other.m_ID;
+
+    other.m_ID.reset();
+
+    return *this;
+}
+
 uint32_t TextureMap::getID()
 {
     if (m_ID)

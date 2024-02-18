@@ -18,7 +18,12 @@ class texture_existence_error : public std::exception
 class Texture2D
 {
   public:
-    Texture2D() {}
+    Texture2D();
+    Texture2D(Texture2D& other) = delete;
+    Texture2D(Texture2D&& other);
+    ~Texture2D();
+
+    Texture2D& operator=(Texture2D&& other);
 
     uint32_t getID();
 

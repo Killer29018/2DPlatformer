@@ -6,6 +6,29 @@
 #include <iostream>
 #include <sstream>
 
+Shader::Shader() {}
+
+Shader::Shader(Shader&& other) : m_ID(other.m_ID) { other.m_ID.reset(); }
+
+Shader::~Shader()
+{
+    try
+    {
+        glDeleteProgram(getID());
+    } catch (shader_existence_error e)
+    {
+    }
+}
+
+Shader& Shader::operator=(Shader&& other)
+{
+    m_ID = std::move(other.m_ID);
+
+    other.m_ID.reset();
+
+    return *this;
+}
+
 uint32_t Shader::getID()
 {
     if (m_ID)

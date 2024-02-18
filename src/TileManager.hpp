@@ -11,6 +11,12 @@ class TileManager : public EventObserver
 {
   public:
     TileManager();
+    TileManager(TileManager& other) = delete;
+    TileManager(TileManager&& other);
+
+    ~TileManager();
+
+    TileManager& operator=(TileManager&& other);
 
     void generateMap();
 

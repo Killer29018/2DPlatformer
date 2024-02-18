@@ -25,9 +25,13 @@ class Window : public EventDispatcher, public EventObserver
     Window(glm::ivec2 windowSize, const char* title);
     Window(uint32_t screenWidth, uint32_t screenHeight, const char* title);
 
+    Window(Window& other) = delete;
     Window(Window&& window);
 
     ~Window();
+
+    Window& operator=(Window& other) = delete;
+    Window& operator=(Window&& other);
 
     void getEvents();
 

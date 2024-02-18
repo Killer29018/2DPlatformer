@@ -19,6 +19,41 @@ Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(t
     setupPlayerData();
 }
 
+Player::Player(Player&& other)
+    : m_Position(other.m_Position), m_VAO(other.m_VAO), m_VBO(other.m_VBO),
+      m_VertexCount(other.m_VertexCount), m_Camera(other.m_Camera), m_Tiles(other.m_Tiles)
+{
+    m_Shader = std::move(other.m_Shader);
+    m_Texture = std::move(other.m_Texture);
+
+    other.m_VAO = 0;
+    other.m_VBO = 0;
+}
+
+Player::~Player()
+{
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+}
+
+Player& Player::operator=(Player&& other)
+{
+    m_Camera = other.m_Camera;
+    m_Position = other.m_Position;
+    m_Shader = std::move(other.m_Shader);
+    m_Texture = std::move(other.m_Texture);
+    m_Tiles = other.m_Tiles;
+
+    m_VAO = other.m_VAO;
+    m_VBO = other.m_VBO;
+    m_VertexCount = other.m_VertexCount;
+
+    other.m_VAO = 0;
+    other.m_VBO = 0;
+
+    return *this;
+}
+
 void Player::receiveEvent(const Event* event)
 {
     switch (event->getType())

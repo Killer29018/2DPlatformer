@@ -26,13 +26,14 @@ Window::Window(uint32_t screenWidth, uint32_t screenHeight, const char* title)
     s_Count++;
 }
 
-Window::Window(Window&& window)
+Window::Window(Window&& other)
 {
-    m_Size = window.m_Size;
-    m_Observers = std::move(window.m_Observers);
-    m_Window = std::move(window.m_Window);
+    m_Size = other.m_Size;
+    m_Observers = std::move(other.m_Observers);
+    m_Window = std::move(other.m_Window);
 
-    s_Count++;
+    other.m_Observers.clear();
+    other.m_Window = nullptr;
 }
 
 Window::~Window()
@@ -42,6 +43,18 @@ Window::~Window()
     {
         glfwTerminate();
     }
+}
+
+Window& Window::operator=(Window&& other)
+{
+    m_Size = other.m_Size;
+    m_Observers = std::move(other.m_Observers);
+    m_Window = std::move(other.m_Window);
+
+    other.m_Observers.clear();
+    other.m_Window = nullptr;
+
+    return *this;
 }
 
 void Window::getEvents() { glfwPollEvents(); }

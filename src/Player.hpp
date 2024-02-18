@@ -11,6 +11,13 @@ class Player : public EventObserver
   public:
     Player();
     Player(Camera* camera, TileManager* tiles);
+    Player(Player& other) = delete;
+    Player(Player&& other);
+
+    ~Player();
+
+    Player& operator=(Player& other) = delete;
+    Player& operator=(Player&& other);
 
     void receiveEvent(const Event* event) override;
 

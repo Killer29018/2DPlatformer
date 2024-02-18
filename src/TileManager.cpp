@@ -3,6 +3,7 @@
 #include "Camera.hpp"
 
 #include "AABB.hpp"
+#include "Tile.hpp"
 #include "glm/fwd.hpp"
 #include <iterator>
 
@@ -10,6 +11,27 @@ Shader TileManager::s_Shader;
 bool TileManager::s_Initialized = false;
 
 TileManager::TileManager() {}
+
+TileManager::TileManager(TileManager&& other)
+{
+    m_Tiles = other.m_Tiles;
+    m_TextureMap = std::move(other.m_TextureMap);
+
+    other.m_Tiles.clear();
+}
+
+TileManager::~TileManager() {}
+
+TileManager& TileManager::operator=(TileManager&& other)
+{
+
+    m_Tiles = other.m_Tiles;
+    m_TextureMap = std::move(other.m_TextureMap);
+
+    other.m_Tiles.clear();
+
+    return *this;
+}
 
 void TileManager::generateMap()
 {

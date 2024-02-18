@@ -1,6 +1,31 @@
 #include "Texture2D.hpp"
 
+#include <iostream>
 #include <stdexcept>
+
+Texture2D::Texture2D() {}
+
+Texture2D::Texture2D(Texture2D&& other) : m_ID(other.m_ID) { other.m_ID.reset(); }
+
+Texture2D::~Texture2D()
+{
+    try
+    {
+        uint32_t id = getID();
+        glDeleteTextures(1, &id);
+    } catch (texture_existence_error e)
+    {
+    }
+}
+
+Texture2D& Texture2D::operator=(Texture2D&& other)
+{
+    m_ID = std::move(other.m_ID);
+
+    other.m_ID.reset();
+
+    return *this;
+}
 
 uint32_t Texture2D::getID()
 {
@@ -36,8 +61,6 @@ void Texture2D::compileFromPath(const char* filename)
             imageFormat = GL_RGB;
         else if (m_Channels == 4)
             imageFormat = GL_RGBA;
-
-        if (m_Channels) printf("ALpha\n");
 
         glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Size.x, m_Size.y, 0, imageFormat,
                      GL_UNSIGNED_BYTE, data);
