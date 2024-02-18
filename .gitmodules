@@ -8,3 +8,7 @@
 	path = vendor/glad
 	url = https://github.com/Dav1dde/glad.git
 	branch = glad2
+[submodule "vendor/imgui"]
+	path = vendor/imgui
+	url = https://github.com/killer29018/imgui
+	branch = docking-opengl-glfw

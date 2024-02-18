@@ -43,6 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${linker} PUBLIC
     OpenGL::GL
     glm::glm
     glfw
+    Imgui
     STB
 )
 
@@ -55,16 +56,8 @@ add_custom_command(
     TARGET Resources POST_BUILD
     COMMAND
     cmake -E make_directory
-    "${OutputRes}/textures/"
-    COMMENT "Create textures folder at ${OutputRes}"
-)
-
-add_custom_command(
-    TARGET Resources POST_BUILD
-    COMMAND
-    cmake -E make_directory
-    "${OutputRes}/shaders/"
-    COMMENT "Create shaders folder at ${OutputRes}"
+    "${OutputRes}/shaders/" "${OutputRes}/fonts/" "${OutputRes}/textures/"
+    COMMENT "Create resource folder at ${OutputRes}"
 )
 
 add_custom_command(
@@ -73,6 +66,14 @@ add_custom_command(
     cmake -E copy_directory
     "${InputRes}/shaders/" "${OutputRes}/shaders"
     COMMENT "Copied Shaders from ${InputRes}/shaders/ To ${OutputRes}/shaders"
+)
+
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
+    cmake -E copy_directory
+    "${InputRes}/fonts/" "${OutputRes}/fonts"
+    COMMENT "Copied Fonts from ${InputRes}/fonts/ To ${OutputRes}/fonts"
 )
 
 file (GLOB RESOURCES_TEXTURES "${InputRes}/textures/*.png")

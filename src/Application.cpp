@@ -3,9 +3,11 @@
 #include "Events.hpp"
 #include "GLFW/glfw3.h"
 #include "glad/gl.h"
+#include <memory>
 
 #include <GL/gl.h>
 #include <algorithm>
+#include <format>
 
 Application::Application(glm::ivec2 windowSize, const char* title)
     : m_Window(Window(windowSize, title))
@@ -21,24 +23,49 @@ void Application::start()
     mainLoop();
 }
 
-void Application::receiveEvent(const Event* event) {}
+void Application::receiveEvent(const Event* event)
+{
+    switch (event->getType())
+    {
+    case EventType::ImGuiRender:
+        {
+            if (ImGui::Begin("Info"))
+            {
+                ImGui::Text("Frametime (ms): %.3f", m_PreviousDT);
+                ImGui::Text("FPS: %d", (int)(1.0f / m_PreviousDT));
+
+                ImGui::End();
+            }
+
+            break;
+        }
+    default:
+        break;
+    }
+}
 
 void Application::initialize()
 {
     m_Camera = Camera{
         m_Window.getSize(), {0.0f, 0.0f, 10.0f}
     };
-    m_Window.setInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    m_Player = Player(&m_Camera, &m_Tiles);
+    m_Player = Player(&m_Camera, &m_TileManager);
 
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
 
+    m_ImGuiManager = ImGuiManager(&m_Window);
+
     m_Window.attach(&m_Player);
     attach(&m_Player);
-    attach(&m_Tiles);
+    attach(&m_TileManager);
+    attach(&m_ImGuiManager);
 
-    m_Tiles.generateMap();
+    m_ImGuiManager.attach(this);
+    m_ImGuiManager.attach(&m_TileManager);
+    m_ImGuiManager.attach(&m_Player);
+
+    m_TileManager.generateMap();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -55,6 +82,7 @@ void Application::mainLoop()
         currentTime = glfwGetTime();
         float dt = currentTime - previousTime;
         previousTime = currentTime;
+        m_PreviousDT = dt;
 
         UpdateEvent event;
         event.dt = dt;
@@ -65,9 +93,13 @@ void Application::mainLoop()
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        m_ImGuiManager.preRender();
+
         RenderEvent render;
         render.camera = &m_Camera;
         notify(&render);
+
+        m_ImGuiManager.postRender();
 
         m_Window.swapBuffers();
     }

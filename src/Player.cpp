@@ -6,6 +6,8 @@
 #include <format>
 #include <iostream>
 
+#include <imgui.h>
+
 Player::Player() : m_Camera(nullptr) {}
 
 Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(tiles)
@@ -110,6 +112,26 @@ void Player::receiveEvent(const Event* event)
             glBindVertexArray(m_VAO);
             glDrawArrays(GL_TRIANGLES, 0, m_VertexCount);
 
+            break;
+        }
+    case EventType::ImGuiRender:
+        {
+            if (ImGui::Begin("Player"))
+            {
+                ImGui::Text("Pos: (%.3f, %.3f)", m_Position.x, m_Position.y);
+                ImGui::Text("Vel: (%.3f, %.3f)", m_Vel.x, m_Vel.y);
+                ImGui::Text("Acc: (%.3f, %.3f)", m_Acc.x, m_Acc.y);
+
+                if (ImGui::Button("Reset"))
+                {
+                    m_Position = glm::vec3(0.0f, 0.0f, m_Position.z);
+
+                    m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
+                    m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);
+                }
+
+                ImGui::End();
+            }
             break;
         }
     default:
