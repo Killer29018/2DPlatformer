@@ -3,12 +3,12 @@
 #include "Camera.hpp"
 
 #include "AABB.hpp"
+#include "Events.hpp"
 #include "Tile.hpp"
-#include "glm/fwd.hpp"
-#include <iterator>
+#include "imgui.h"
 
 Shader TileManager::s_Shader;
-bool TileManager::s_Initialized = false;
+bool TileManager::s_ShaderInitialized = false;
 
 TileManager::TileManager() {}
 
@@ -38,33 +38,33 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-        { { -5.0f, 0.0f }, { 1, 1 }, TileMap::STONE_TOP_LEFT },
-        { { -4.0f, 0.0f }, { 9, 1 }, TileMap::STONE_TOP_CENTER },
-        { { 5.0f, 0.0f }, { 1, 1 }, TileMap::STONE_TOP_RIGHT },
+        {{ -5.0f, 0.0f, 0.0f },   { 1, 1 }, TileType::STONE_TOP_LEFT        },
+        { { -4.0f, 0.0f, 0.0f },  { 9, 1 }, TileType::STONE_TOP_CENTER      },
+        { { 5.0f, 0.0f, 0.0f },   { 1, 1 }, TileType::STONE_TOP_RIGHT       },
 
-        { { -5.0f, -3.0f }, { 1, 3 }, TileMap::STONE_CENTER_LEFT },
-        { { -4.0f, -3.0f }, { 9, 3 }, TileMap::STONE_CENTER },
-        { { 5.0f, -3.0f }, { 1, 3 }, TileMap::STONE_CENTER_RIGHT },
+        { { -5.0f, -3.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { -4.0f, -3.0f, 0.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+        { { 5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
 
-        { { -5.0f, -4.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_LEFT },
-        { { -4.0f, -4.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER },
-        { { 5.0f, -4.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_RIGHT },
+        { { -5.0f, -4.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { -4.0f, -4.0f, 0.0f }, { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
 
-        { { 10.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_LEFT, 1.0f },
-        { { 11.0f, 3.0f }, { 9, 1 }, TileMap::ABOVE_GRASS_TOP_CENTER, 1.0f },
-        { { 20.0f, 3.0f }, { 1, 1 }, TileMap::ABOVE_GRASS_TOP_RIGHT, 1.0f },
+        { { 10.0f, 3.0f, 1.0f },  { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
+        { { 11.0f, 3.0f, 1.0f },  { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
+        { { 20.0f, 3.0f, 1.0f },  { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
 
-        { { 10.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_LEFT },
-        { { 11.0f, 2.0f }, { 9, 1 }, TileMap::STONE_GRASS_TOP_CENTER },
-        { { 20.0f, 2.0f }, { 1, 1 }, TileMap::STONE_GRASS_TOP_RIGHT },
+        { { 10.0f, 2.0f, 0.0f },  { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
+        { { 11.0f, 2.0f, 0.0f },  { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
+        { { 20.0f, 2.0f, 0.0f },  { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
 
-        { { 10.0f, -1.0f }, { 1, 3 }, TileMap::STONE_CENTER_LEFT },
-        { { 11.0f, -1.0f }, { 9, 3 }, TileMap::STONE_CENTER },
-        { { 20.0f, -1.0f }, { 1, 3 }, TileMap::STONE_CENTER_RIGHT },
+        { { 10.0f, -1.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { 11.0f, -1.0f, 0.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+        { { 20.0f, -1.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
 
-        { { 10.0f, -2.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_LEFT },
-        { { 11.0f, -2.0f }, { 9, 1 }, TileMap::STONE_BOTTOM_CENTER },
-        { { 20.0f, -2.0f }, { 1, 1 }, TileMap::STONE_BOTTOM_RIGHT },
+        { { 10.0f, -2.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { 11.0f, -2.0f, 0.0f }, { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 20.0f, -2.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
     };
 
     m_TextureMap.compileFromPath("res/textures/Tilemap.png", 32, 32);
@@ -131,7 +131,8 @@ glm::vec4 TileManager::checkCollision(glm::vec3 previousPosition, glm::vec2 size
 
 void TileManager::receiveEvent(const Event* event)
 {
-    srand(0);
+    static glm::vec2 mousePos;
+
     switch (event->getType())
     {
     case EventType::Render:
@@ -157,14 +158,29 @@ void TileManager::receiveEvent(const Event* event)
         break;
     }
 }
+void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
+{
+    m_Tiles.emplace_back(position, size, type);
+}
+
+glm::vec2 TileManager::worldPositionToTilePosition(glm::vec2 position)
+{
+    position /= Tile::s_TileSize;
+    position.x = floor(position.x);
+    position.y = floor(position.y);
+
+    return position;
+}
+
+glm::vec2 TileManager::tilePositionToWorldPosition(glm::vec2 position) { return position; }
 
 void TileManager::generateShader()
 {
-    if (!s_Initialized)
-        s_Initialized = true;
+    if (!s_ShaderInitialized)
+        s_ShaderInitialized = true;
     else
         return;
 
-    s_Initialized = true;
+    s_ShaderInitialized = true;
     s_Shader.compileFromPath("res/shaders/tile.vert.glsl", "res/shaders/tile.frag.glsl");
 }

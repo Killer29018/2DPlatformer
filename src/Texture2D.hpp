@@ -25,11 +25,11 @@ class Texture2D
 
     Texture2D& operator=(Texture2D&& other);
 
-    uint32_t getID();
+    uint32_t getID() const;
 
     void compileFromPath(const char* filename);
 
-    void bind();
+    void bind() const;
     static void unbind();
 
     static void activeTexture(uint32_t texture) { glActiveTexture(texture); }

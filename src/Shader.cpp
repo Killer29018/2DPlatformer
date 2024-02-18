@@ -2,7 +2,6 @@
 
 #include "glad/gl.h"
 
-#include <exception>
 #include <iostream>
 #include <sstream>
 

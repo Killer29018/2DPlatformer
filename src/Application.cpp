@@ -47,7 +47,7 @@ void Application::receiveEvent(const Event* event)
 void Application::initialize()
 {
     m_Camera = Camera{
-        m_Window.getSize(), {0.0f, 0.0f, 10.0f}
+        m_Window.getSize(), {0.0f, 0.0f, 100.0f}
     };
 
     m_Player = Player(&m_Camera, &m_TileManager);
@@ -55,15 +55,19 @@ void Application::initialize()
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
 
     m_ImGuiManager = ImGuiManager(&m_Window);
+    m_MapManager = MapManager(&m_Player, &m_TileManager);
 
     m_Window.attach(&m_Player);
+    m_Window.attach(&m_MapManager);
     attach(&m_Player);
     attach(&m_TileManager);
+    attach(&m_MapManager);
     attach(&m_ImGuiManager);
 
     m_ImGuiManager.attach(this);
     m_ImGuiManager.attach(&m_TileManager);
     m_ImGuiManager.attach(&m_Player);
+    m_ImGuiManager.attach(&m_MapManager);
 
     m_TileManager.generateMap();
 

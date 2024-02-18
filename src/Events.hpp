@@ -10,8 +10,8 @@ enum class EventType : std::size_t {
     Render,
     KeyboardPress,
     MouseMove,
-    MousePosition,
     MouseEnter,
+    MousePress,
     ImGuiRender
 };
 
@@ -65,17 +65,12 @@ struct MouseMoveEvent : public Event {
 
     double xOffset;
     double yOffset;
-
-  public:
-    virtual EventType getType() const { return type; }
-};
-
-struct MousePositionEvent : public Event {
-  public:
-    static constexpr EventType type = EventType::MousePosition;
-
     double xPosition;
     double yPosition;
+    double xPercent;
+    double yPercent;
+
+  public:
     virtual EventType getType() const { return type; }
 };
 
@@ -84,6 +79,17 @@ struct MouseEnterEvent : public Event {
     static constexpr EventType type = EventType::MouseEnter;
 
     bool entered;
+
+  public:
+    virtual EventType getType() const { return type; }
+};
+
+struct MousePressEvent : public Event {
+  public:
+    static constexpr EventType type = EventType::MousePress;
+
+    bool leftClick;
+    bool rightClick;
 
   public:
     virtual EventType getType() const { return type; }

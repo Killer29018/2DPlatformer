@@ -3,6 +3,7 @@
 #include "Camera.hpp"
 #include "EventHandler.hpp"
 #include "ImGuiManager.hpp"
+#include "MapManager.hpp"
 #include "Player.hpp"
 #include "Shader.hpp"
 #include "TileManager.hpp"
@@ -21,6 +22,7 @@ class Application : public EventDispatcher, public EventObserver
   private:
     Player m_Player;
     TileManager m_TileManager;
+    MapManager m_MapManager;
 
     Window m_Window;
 

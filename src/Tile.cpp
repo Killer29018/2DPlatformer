@@ -2,22 +2,20 @@
 
 #include <glad/gl.h>
 
-float Tile::s_TileSize = 0.1f;
 uint32_t Tile::s_VertexCount = 0;
 uint32_t Tile::s_VAO;
 uint32_t Tile::s_VBO;
 bool Tile::s_TileInitialized = false;
 
-Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_TileType(TileMap::NONE) {}
+Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_Type(TileType::NONE) {}
 
-Tile::Tile(glm::vec2 position, TileMap map, float depth)
-    : m_Position(position.x, position.y, depth), m_BlockSize(1, 1), m_TileType(map)
+Tile::Tile(glm::vec3 position, TileType map) : m_Position(position), m_BlockSize(1, 1), m_Type(map)
 {
     generateMesh();
 }
 
-Tile::Tile(glm::vec2 position, glm::ivec2 blockSize, TileMap map, float depth)
-    : m_Position(position.x, position.y, depth), m_BlockSize(blockSize), m_TileType(map)
+Tile::Tile(glm::vec3 position, glm::ivec2 blockSize, TileType map)
+    : m_Position(position), m_BlockSize(blockSize), m_Type(map)
 {
     generateMesh();
 }
@@ -31,7 +29,7 @@ void Tile::render(Shader& shader)
         model, glm::vec3(m_Position.x / m_BlockSize.x, m_Position.y / m_BlockSize.y, m_Position.z));
 
     shader.setMat4("u_Model", model);
-    shader.setIVec2("u_TileIndex", TileMapToVec.at(m_TileType));
+    shader.setIVec2("u_TileIndex", TileTypeToVec.at(m_Type));
 
     shader.setIVec2("u_TileSize", m_BlockSize);
 
@@ -66,8 +64,8 @@ void Tile::generateMesh()
         return;
     }
 
-    assert(TileMapToVec.size() == static_cast<int>(TileMap::LAST) &&
-           "Missing TileMapToVec entries or TileMap entries");
+    assert(TileTypeToVec.size() == static_cast<int>(TileType::LAST) &&
+           "Missing TileTypeToVec entries or TileType entries");
 
     glGenVertexArrays(1, &s_VAO);
     glGenBuffers(1, &s_VBO);

@@ -13,18 +13,18 @@ class TextureMap
 
     TextureMap& operator=(TextureMap&& other);
 
-    uint32_t getID();
+    uint32_t getID() const;
 
     void compileFromPath(const char* filename, uint32_t tileWidth, uint32_t tileHeight);
 
-    void bind();
+    void bind() const;
     static void unbind() { glBindTexture(GL_TEXTURE_3D, 0); }
 
     static void activeTexture(uint32_t texture) { glActiveTexture(texture); }
 
-    glm::ivec2 getTileSize();
-    glm::ivec2 getTileDimensions();
-    glm::ivec2 getTotalSize();
+    glm::ivec2 getTileSize() const;
+    glm::ivec2 getTileDimensions() const;
+    glm::ivec2 getTotalSize() const;
 
     void setWrap(uint32_t wrapS, uint32_t wrapT);
     void setFilters(uint32_t min, uint32_t mag);

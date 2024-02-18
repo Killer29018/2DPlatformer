@@ -36,7 +36,7 @@ TextureMap& TextureMap::operator=(TextureMap&& other)
     return *this;
 }
 
-uint32_t TextureMap::getID()
+uint32_t TextureMap::getID() const
 {
     if (m_ID)
         return m_ID.value();
@@ -117,11 +117,11 @@ void TextureMap::compileFromPath(const char* filename, uint32_t tileWidth, uint3
     stbi_image_free(data);
 }
 
-void TextureMap::bind() { glBindTexture(GL_TEXTURE_2D_ARRAY, getID()); }
+void TextureMap::bind() const { glBindTexture(GL_TEXTURE_2D_ARRAY, getID()); }
 
-glm::ivec2 TextureMap::getTileSize() { return m_TileSize; }
-glm::ivec2 TextureMap::getTileDimensions() { return m_TileDimensions; }
-glm::ivec2 TextureMap::getTotalSize() { return m_TotalSize; }
+glm::ivec2 TextureMap::getTileSize() const { return m_TileSize; }
+glm::ivec2 TextureMap::getTileDimensions() const { return m_TileDimensions; }
+glm::ivec2 TextureMap::getTotalSize() const { return m_TotalSize; }
 
 void TextureMap::setWrap(uint32_t wrapS, uint32_t wrapT)
 {

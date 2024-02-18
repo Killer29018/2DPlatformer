@@ -2,6 +2,7 @@
 
 #include "EventHandler.hpp"
 #include "Events.hpp"
+#include "GhostTile.hpp"
 #include "Shader.hpp"
 #include "TextureMap.hpp"
 #include "Tile.hpp"
@@ -20,15 +21,22 @@ class TileManager : public EventObserver
 
     void generateMap();
 
+    const TextureMap& getTextureMap() { return m_TextureMap; }
+
     glm::vec4 checkCollision(glm::vec3 previousPosition, glm::vec2 size, glm::vec2 velocity);
 
+    void setTile(glm::vec3 position, glm::ivec2 size, TileType type);
+
     void receiveEvent(const Event* event) override;
+
+    static glm::vec2 worldPositionToTilePosition(glm::vec2 position);
+    static glm::vec2 tilePositionToWorldPosition(glm::vec2 position);
 
   private:
     std::vector<Tile> m_Tiles;
 
     static Shader s_Shader;
-    static bool s_Initialized;
+    static bool s_ShaderInitialized;
 
     TextureMap m_TextureMap;
 

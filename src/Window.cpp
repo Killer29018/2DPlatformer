@@ -1,5 +1,6 @@
 #include "Window.hpp"
 #include "EventHandler.hpp"
+#include "Events.hpp"
 #include "GLFW/glfw3.h"
 
 #include <algorithm>
@@ -154,6 +155,7 @@ void Window::initGLFW(const char* title)
     glfwSetKeyCallback(getWindow(), keyboardEvent);
     glfwSetCursorPosCallback(getWindow(), mouseMoveEvent);
     glfwSetCursorEnterCallback(getWindow(), mouseEnteredEvent);
+    glfwSetMouseButtonCallback(getWindow(), mousePressEvent);
 }
 
 void Window::keyboardEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -178,12 +180,6 @@ void Window::mouseMoveEvent(GLFWwindow* window, double xPos, double yPos)
 
     if (!w->m_MouseCaptured) return;
 
-    MousePositionEvent positionEvent;
-    positionEvent.xPosition = xPos;
-    positionEvent.yPosition = yPos;
-
-    w->notify(&positionEvent);
-
     MouseMoveEvent moveEvent;
     if (w->m_FirstMouse)
     {
@@ -193,6 +189,12 @@ void Window::mouseMoveEvent(GLFWwindow* window, double xPos, double yPos)
     }
     moveEvent.xOffset = xPos - previousX;
     moveEvent.yOffset = previousY - yPos;
+
+    moveEvent.xPosition = xPos;
+    moveEvent.yPosition = yPos;
+
+    moveEvent.xPercent = xPos / w->getSize().x;
+    moveEvent.yPercent = yPos / w->getSize().y;
 
     previousX = xPos;
     previousY = yPos;
@@ -208,4 +210,18 @@ void Window::mouseEnteredEvent(GLFWwindow* window, int entered)
     event.entered = entered;
 
     w->notify(&event);
+}
+
+void Window::mousePressEvent(GLFWwindow* window, int button, int action, int mods)
+{
+    Window* w = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    if (action == GLFW_PRESS)
+    {
+        MousePressEvent event;
+        if (button == GLFW_MOUSE_BUTTON_LEFT) event.leftClick = true;
+        if (button == GLFW_MOUSE_BUTTON_RIGHT) event.rightClick = true;
+
+        w->notify(&event);
+    }
 }

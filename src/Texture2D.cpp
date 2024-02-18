@@ -27,7 +27,7 @@ Texture2D& Texture2D::operator=(Texture2D&& other)
     return *this;
 }
 
-uint32_t Texture2D::getID()
+uint32_t Texture2D::getID() const
 {
     if (m_ID)
     {
@@ -80,5 +80,5 @@ void Texture2D::compileFromPath(const char* filename)
     stbi_image_free(data);
 }
 
-void Texture2D::bind() { glBindTexture(GL_TEXTURE_2D, getID()); }
+void Texture2D::bind() const { glBindTexture(GL_TEXTURE_2D, getID()); }
 void Texture2D::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }

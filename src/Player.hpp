@@ -19,6 +19,8 @@ class Player : public EventObserver
     Player& operator=(Player& other) = delete;
     Player& operator=(Player&& other);
 
+    glm::vec3 getPosition() { return m_Position; }
+
     void receiveEvent(const Event* event) override;
 
   private:
