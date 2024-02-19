@@ -16,5 +16,26 @@ glm::mat4 Camera::getViewMatrix() const
 
 glm::mat4 Camera::getProjectionMatrix() const
 {
-    return glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, m_NearClipping, m_FarClipping);
+    float aspectRatio = (float)m_WindowSize.x / (float)m_WindowSize.y;
+    float halfHeight = 1.f;
+    float halfWidth = halfHeight * aspectRatio;
+    return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, m_NearClipping,
+                      m_FarClipping);
+}
+
+void Camera::receiveEvent(const Event* event)
+{
+    switch (event->getType())
+    {
+    case EventType::WindowResize:
+        {
+            const WindowResizeEvent* rEvent = reinterpret_cast<const WindowResizeEvent*>(event);
+
+            m_WindowSize = glm::ivec2{ rEvent->newWidth, rEvent->newHeight };
+
+            break;
+        }
+    default:
+        break;
+    }
 }

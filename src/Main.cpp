@@ -1,8 +1,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Application.hpp"
 
-const uint32_t SCREEN_WIDTH = 1000;
-const uint32_t SCREEN_HEIGHT = 1000;
+const uint32_t SCREEN_WIDTH = 1920;
+const uint32_t SCREEN_HEIGHT = 1080;
 
 int main()
 {

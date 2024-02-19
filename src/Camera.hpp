@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 
-class Camera
+class Camera : public EventObserver
 {
   public:
     Camera();
@@ -16,6 +16,8 @@ class Camera
 
     glm::mat4 getViewMatrix() const;
     glm::mat4 getProjectionMatrix() const;
+
+    void receiveEvent(const Event* event) override;
 
     void setPosition(glm::vec3 position) { m_Position = position; }
     void setXYPosition(glm::vec2 position)

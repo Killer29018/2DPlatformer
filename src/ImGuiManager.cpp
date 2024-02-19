@@ -69,10 +69,10 @@ void ImGuiManager::initImGui()
     ImGui::CreateContext();
     m_IO = &ImGui::GetIO();
     m_IO->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    m_IO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // m_IO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     // m_IO->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    m_IO->Fonts->AddFontFromFileTTF("res/fonts/Hack-Regular.ttf", 20.0f);
+    m_IO->Fonts->AddFontFromFileTTF("res/fonts/Hack-Regular.ttf", 24.0f);
 
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(m_Window->getWindow(), true);

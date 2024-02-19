@@ -5,11 +5,13 @@
 
 MapManager::MapManager() {}
 
-MapManager::MapManager(Player* player, TileManager* tileManager)
-    : m_Player(player), m_TileManager(tileManager)
+MapManager::MapManager(Player* player, TileManager* tileManager, Window* window)
+    : m_Player(player), m_TileManager(tileManager), m_Window(window)
 {
     m_GhostShader.compileFromPath("res/shaders/ghostTile.vert.glsl",
                                   "res/shaders/ghostTile.frag.glsl");
+
+    m_GhostTile = GhostTile(glm::vec3{ 0.0f }, glm::ivec2{ 1 }, TileType::STONE_CENTER);
 }
 
 void MapManager::receiveEvent(const Event* event)
@@ -24,10 +26,15 @@ void MapManager::receiveEvent(const Event* event)
         {
             mousePos = mousePercent;
 
-            mousePos *= 2;
-            mousePos -= 1;
+            glm::ivec2 windowSize = m_Window->getSize();
+            float aspectRatio = (float)windowSize.x / (float)windowSize.y;
+            float halfHeight = 1.f;
+            float halfWidth = aspectRatio * halfHeight;
 
-            mousePos.y *= -1;
+            glm::vec2 halfSize = { halfWidth, -halfHeight };
+
+            mousePos *= (halfSize * 2.f);
+            mousePos -= halfSize;
 
             glm::vec3 playerPosition = m_Player->getPosition();
             mousePos += glm::vec2{ playerPosition.x, playerPosition.y };

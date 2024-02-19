@@ -55,8 +55,9 @@ void Application::initialize()
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
 
     m_ImGuiManager = ImGuiManager(&m_Window);
-    m_MapManager = MapManager(&m_Player, &m_TileManager);
+    m_MapManager = MapManager(&m_Player, &m_TileManager, &m_Window);
 
+    m_Window.attach(&m_Camera);
     m_Window.attach(&m_Player);
     m_Window.attach(&m_MapManager);
     attach(&m_Player);

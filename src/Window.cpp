@@ -3,6 +3,7 @@
 #include "Events.hpp"
 #include "GLFW/glfw3.h"
 
+#include <GL/gl.h>
 #include <algorithm>
 #include <format>
 #include <iostream>
@@ -104,6 +105,15 @@ void Window::receiveEvent(const Event* event)
             }
             break;
         }
+    case EventType::WindowResize:
+        {
+            const WindowResizeEvent* rEvent = reinterpret_cast<const WindowResizeEvent*>(event);
+            m_Size = glm::vec2{ rEvent->newWidth, rEvent->newHeight };
+
+            glViewport(0, 0, m_Size.x, m_Size.y);
+
+            break;
+        }
     default:
         break;
     }
@@ -156,6 +166,7 @@ void Window::initGLFW(const char* title)
     glfwSetCursorPosCallback(getWindow(), mouseMoveEvent);
     glfwSetCursorEnterCallback(getWindow(), mouseEnteredEvent);
     glfwSetMouseButtonCallback(getWindow(), mousePressEvent);
+    glfwSetWindowSizeCallback(getWindow(), windowResizeEvent);
 }
 
 void Window::keyboardEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -224,4 +235,18 @@ void Window::mousePressEvent(GLFWwindow* window, int button, int action, int mod
 
         w->notify(&event);
     }
+}
+
+void Window::windowResizeEvent(GLFWwindow* window, int width, int height)
+{
+    Window* w = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    WindowResizeEvent event;
+    glm::ivec2 size = w->getSize();
+    event.previousWidth = size.x;
+    event.previousHeight = size.y;
+    event.newWidth = width;
+    event.newHeight = height;
+
+    w->notify(&event);
 }

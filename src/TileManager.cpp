@@ -78,10 +78,6 @@ glm::vec4 TileManager::checkCollision(glm::vec3 previousPosition, glm::vec2 size
     const int iterations = 2;
     for (int i = 0; i < iterations; i++)
     {
-        float xOffset = 0;
-        float yOffset = 0;
-        bool collision = false;
-
         for (Tile& t : m_Tiles)
         {
             glm::vec3 position = t.getWorldPosition();
@@ -97,33 +93,18 @@ glm::vec4 TileManager::checkCollision(glm::vec3 previousPosition, glm::vec2 size
                 glm::vec2 offsets =
                     AABB::calculateOffsets(afterBoundingBox, tileBoundingBox, velocity);
 
-                xOffset += offsets.x;
-                yOffset += offsets.y;
-
-                collision = true;
+                if (fabs(offsets.y) < fabs(offsets.x))
+                {
+                    afterBoundingBox.y += offsets.y;
+                    velocity.y = 0;
+                }
+                else
+                {
+                    afterBoundingBox.x += offsets.x;
+                    velocity.x = 0;
+                }
             }
         }
-
-        if (collision)
-        {
-            if (fabs(yOffset) < fabs(xOffset))
-            {
-                velocity.y = 0;
-                xOffset = 0;
-            }
-            else
-            {
-                velocity.x = 0;
-                yOffset = 0;
-            }
-        }
-        else
-        {
-            break;
-        }
-
-        afterBoundingBox.x += xOffset;
-        afterBoundingBox.y += yOffset;
     }
 
     return glm::vec4{ afterBoundingBox.x, afterBoundingBox.y, velocity.x, velocity.y };

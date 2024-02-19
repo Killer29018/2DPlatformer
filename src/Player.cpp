@@ -12,7 +12,7 @@ Player::Player() : m_Camera(nullptr) {}
 
 Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(tiles)
 {
-    m_Position = glm::vec3(1.0, 1.5, 0);
+    m_Position = glm::vec3(1.0, 1.6, 0);
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
 
@@ -99,6 +99,12 @@ void Player::receiveEvent(const Event* event)
                     case GLFW_KEY_D:
                         m_Acc += m_worldRight * m_MovementSpeed;
                         break;
+
+                    case GLFW_KEY_R:
+                        m_Position = glm::vec3(1.0f, 1.5f, m_Position.z);
+                        m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
+                        m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);
+                        break;
                     }
                 }
             }
@@ -115,6 +121,10 @@ void Player::receiveEvent(const Event* event)
             if (m_Position.y == positionVelocity.y)
             {
                 m_OnGround = true;
+            }
+            else
+            {
+                m_OnGround = false;
             }
 
             m_Position = glm::vec3{ positionVelocity.x, positionVelocity.y, m_Position.z };
@@ -159,7 +169,7 @@ void Player::receiveEvent(const Event* event)
 
                 if (ImGui::Button("Reset"))
                 {
-                    m_Position = glm::vec3(0.0f, 0.0f, m_Position.z);
+                    m_Position = glm::vec3(1.0f, 1.5f, m_Position.z);
 
                     m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
                     m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);

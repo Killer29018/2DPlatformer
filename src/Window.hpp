@@ -64,4 +64,5 @@ class Window : public EventDispatcher, public EventObserver
     static void mouseMoveEvent(GLFWwindow* window, double xPos, double yPos);
     static void mouseEnteredEvent(GLFWwindow* window, int entered);
     static void mousePressEvent(GLFWwindow* window, int button, int action, int mods);
+    static void windowResizeEvent(GLFWwindow* window, int width, int height);
 };
