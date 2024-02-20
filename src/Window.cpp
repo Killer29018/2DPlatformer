@@ -3,6 +3,7 @@
 #include "Events.hpp"
 #include "GLFW/glfw3.h"
 
+#include "imgui.h"
 #include <GL/gl.h>
 #include <algorithm>
 #include <format>
@@ -218,7 +219,7 @@ void Window::mouseMoveEvent(GLFWwindow* window, double xPos, double yPos)
         mdEvent.leftClick = w->m_LeftMouseClicked;
         mdEvent.rightClick = w->m_RightMouseClicked;
 
-        w->notify(&mdEvent);
+        if (!ImGui::GetIO().WantCaptureMouse) w->notify(&mdEvent);
     }
 }
 
@@ -271,14 +272,14 @@ void Window::mousePressEvent(GLFWwindow* window, int button, int action, int mod
     {
         mpEvent.xPosition = xPos;
         mpEvent.yPosition = yPos;
-        w->notify(&mpEvent);
+        if (!ImGui::GetIO().WantCaptureMouse) w->notify(&mpEvent);
     }
 
     if (released)
     {
         mrEvent.xPosition = xPos;
         mrEvent.yPosition = yPos;
-        w->notify(&mrEvent);
+        if (!ImGui::GetIO().WantCaptureMouse) w->notify(&mrEvent);
     }
 }
 

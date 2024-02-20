@@ -26,6 +26,8 @@ class TextureMap
     glm::ivec2 getTileDimensions() const;
     glm::ivec2 getTotalSize() const;
 
+    const Texture2D& getEntireTexture() const;
+
     void setWrap(uint32_t wrapS, uint32_t wrapT);
     void setFilters(uint32_t min, uint32_t mag);
     void setInternalFormat(uint32_t format);
@@ -46,4 +48,6 @@ class TextureMap
     uint32_t m_MagFilter = GL_NEAREST;
 
     uint32_t m_InternalFormat = GL_RGBA;
+
+    Texture2D m_EntireTexture;
 };

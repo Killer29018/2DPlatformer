@@ -41,33 +41,33 @@ void TileManager::generateMap()
     generateShader();
 
     m_Tiles = {
-        {{ -5.0f, 0.0f, 0.0f },   { 1, 1 }, TileType::STONE_TOP_LEFT        },
-        { { -4.0f, 0.0f, 0.0f },  { 9, 1 }, TileType::STONE_TOP_CENTER      },
-        { { 5.0f, 0.0f, 0.0f },   { 1, 1 }, TileType::STONE_TOP_RIGHT       },
+        {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
+        { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
+        { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
 
-        { { -5.0f, -3.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { -4.0f, -3.0f, 0.0f }, { 9, 3 }, TileType::STONE_CENTER          },
-        { { 5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+        { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { -4.0f, -3.0f, 0.0f },  { 9, 3 }, TileType::STONE_CENTER          },
+        { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
 
-        { { -5.0f, -4.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { -4.0f, -4.0f, 0.0f }, { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+        { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
 
-        { { 10.0f, 3.0f, 1.0f },  { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
-        { { 11.0f, 3.0f, 1.0f },  { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
-        { { 20.0f, 3.0f, 1.0f },  { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
+        { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
+        { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
+        { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
 
-        { { 10.0f, 2.0f, 0.0f },  { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
-        { { 11.0f, 2.0f, 0.0f },  { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
-        { { 20.0f, 2.0f, 0.0f },  { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
+        { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
+        { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
+        { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
 
-        { { 10.0f, -1.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { 11.0f, -1.0f, 0.0f }, { 9, 3 }, TileType::STONE_CENTER          },
-        { { 20.0f, -1.0f, 0.0f }, { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+        { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+        { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
 
-        { { 10.0f, -2.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { 11.0f, -2.0f, 0.0f }, { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 20.0f, -2.0f, 0.0f }, { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+        { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
     };
 
     m_TextureMap.compileFromPath("res/textures/Tilemap.png", 32, 32);
@@ -153,33 +153,34 @@ void TileManager::receiveEvent(const Event* event)
 void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
 {
     auto end = m_Tiles.rend();
-    bool matching = false;
     for (auto it = m_Tiles.rbegin(); it != end; it++)
     {
         // Is there already a block at that position
-        bool containsPosition = it->containsPositionIncludeDepth(position);
-        if (it->getType() == type && containsPosition) matching = true;
-        if (it->getType() != type && containsPosition)
+        bool matchingDepth = it->containsPositionIncludeDepth(position);
+        bool matching = it->containsPositionExcludeDepth(position);
+
+        bool replace = (matching && !matchingDepth && it->getType() == type) ||
+                       (matchingDepth && it->getType() != type);
+
+        if (replace)
         {
             // Expand the tile and add the new tiles to the end of the array
             // Remove the old tile from the list
-            std::vector<Tile> newTiles = expandTile(*it);
 
+            std::vector<Tile> newTiles = expandTile(*it);
             m_Tiles.erase(std::next(it).base());
 
             for (const Tile& t : newTiles)
             {
-                if (t.getPosition() != position)
+                glm::vec3 tilePos = t.getPosition();
+                if (tilePos.x != position.x || tilePos.y != position.y)
                 {
                     m_Tiles.push_back(t);
                 }
             }
         }
     }
-    if (!matching)
-    {
-        m_Tiles.emplace_back(position, size, type);
-    }
+    m_Tiles.emplace_back(position, size, type);
 }
 
 void TileManager::removeTile(glm::vec3 position)

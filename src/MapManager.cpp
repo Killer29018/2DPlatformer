@@ -1,7 +1,11 @@
 #include "MapManager.hpp"
 
 #include "Events.hpp"
+#include "TileTypes.hpp"
 #include "imgui.h"
+
+#include <format>
+#include <iostream>
 
 MapManager::MapManager() {}
 
@@ -41,7 +45,8 @@ void MapManager::receiveEvent(const Event* event)
             mousePos += glm::vec2{ playerPosition.x, playerPosition.y };
             mousePos = TileManager::worldPositionToTilePosition(mousePos);
 
-            m_GhostTile.setPosition(glm::vec3{ mousePos.x, mousePos.y, 10.0f });
+            m_GhostTile.setPosition(
+                glm::vec3{ mousePos.x, mousePos.y, m_GhostTile.getPosition().z });
             break;
         }
     case EventType::Render:
@@ -102,6 +107,70 @@ void MapManager::receiveEvent(const Event* event)
             if (ImGui::Begin("MapManager"))
             {
                 ImGui::Text("Mouse Tile Pos: (%f, %f)", mousePos.x, mousePos.y);
+
+                const TextureMap& map = m_TileManager->getTextureMap();
+                uint32_t id = map.getEntireTexture().getID();
+                glm::ivec2 size = map.getTotalSize();
+                glm::ivec2 tileSize = map.getTileSize();
+                glm::ivec2 tiles = map.getTileDimensions();
+
+                ImGui::Text("Texture ID: %d", id);
+
+                int depth = (int)m_GhostTile.getPosition().z;
+                ImGui::SliderInt("Depth", &depth, -10, 10);
+                m_GhostTile.setDepth((float)depth);
+
+                ImVec2 initialPos = ImGui::GetCursorPos();
+                ImGui::Image((void*)(intptr_t)id, ImVec2(size.x, size.y));
+                ImGui::SetCursorPos(initialPos);
+
+                int32_t xCoord = -1;
+                int32_t yCoord = -1;
+                bool pressed = false;
+
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+
+                for (int y = 0; y < tiles.y; y++)
+                {
+                    for (int x = 0; x < tiles.x; x++)
+                    {
+                        ImGui::PushID(y * size.x + x);
+
+                        if (ImGui::Button("##TilemapSelection", ImVec2(tileSize.x, tileSize.y)))
+                        {
+                            xCoord = x;
+                            yCoord = y;
+                            pressed = true;
+                        }
+
+                        ImGui::PopID();
+
+                        if (x != tiles.x - 1)
+                        {
+                            ImGui::SameLine();
+                        }
+                    }
+                }
+
+                ImGui::PopStyleVar(1);
+
+                if (pressed)
+                {
+                    // Find TileType for coordinate
+                    glm::ivec2 tileCoord{ xCoord, yCoord };
+                    auto result = std::find_if(TileTypeToVec.begin(), TileTypeToVec.end(),
+                                               [&](const std::pair<TileType, glm::ivec2>& pair) {
+                                                   return pair.second == tileCoord;
+                                               });
+                    TileType type = TileType::NONE;
+
+                    if (result != TileTypeToVec.end())
+                    {
+                        type = result->first;
+                        m_GhostTile.setTile(type);
+                    }
+                }
+
                 ImGui::End();
             }
             break;
@@ -113,7 +182,7 @@ void MapManager::receiveEvent(const Event* event)
 void MapManager::placeBlock()
 {
     glm::vec3 ghostPosition = m_GhostTile.getPosition();
-    glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, 0.0f };
+    glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, ghostPosition.z };
     m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
 }
 

@@ -18,6 +18,7 @@ class Tile
 
     void setTile(TileType type) { m_Type = type; }
     void setPosition(glm::vec3 position) { m_Position = position; }
+    void setDepth(float depth) { m_Position.z = depth; }
     void setWorldPosition(glm::vec3 position);
 
     glm::vec3 getPosition() const { return m_Position; }
