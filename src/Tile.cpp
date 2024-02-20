@@ -43,6 +43,15 @@ void Tile::setWorldPosition(glm::vec3 position)
     m_Position = glm::vec3(position.x / s_TileSize, position.y / s_TileSize, position.z);
 }
 
+bool Tile::containsPositionExcludeDepth(glm::vec3 position)
+{
+    glm::vec3 pos = getPosition();
+    glm::vec2 size = getSize();
+
+    return (pos.x <= position.x && pos.x + size.x >= position.x && //
+            pos.y <= position.y && pos.y + size.y >= position.y);
+}
+
 glm::vec3 Tile::getWorldPosition()
 {
     return glm::vec3(m_Position.x * s_TileSize, m_Position.y * s_TileSize, m_Position.z);

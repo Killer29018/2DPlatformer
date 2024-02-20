@@ -26,6 +26,7 @@ class TileManager : public EventObserver
     glm::vec4 checkCollision(glm::vec3 previousPosition, glm::vec2 size, glm::vec2 velocity);
 
     void setTile(glm::vec3 position, glm::ivec2 size, TileType type);
+    void removeTile(glm::vec3 position);
 
     void receiveEvent(const Event* event) override;
 

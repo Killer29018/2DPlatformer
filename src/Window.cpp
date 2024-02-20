@@ -230,6 +230,9 @@ void Window::mousePressEvent(GLFWwindow* window, int button, int action, int mod
     if (action == GLFW_PRESS)
     {
         MousePressEvent event;
+        event.leftClick = false;
+        event.rightClick = false;
+
         if (button == GLFW_MOUSE_BUTTON_LEFT) event.leftClick = true;
         if (button == GLFW_MOUSE_BUTTON_RIGHT) event.rightClick = true;
 

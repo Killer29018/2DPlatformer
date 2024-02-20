@@ -144,6 +144,19 @@ void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
     m_Tiles.emplace_back(position, size, type);
 }
 
+void TileManager::removeTile(glm::vec3 position)
+{
+    for (auto it = m_Tiles.rbegin(); it != m_Tiles.rend(); it++)
+    {
+        if (it->containsPositionExcludeDepth(position))
+        {
+            // Remove Tile
+            printf("Found Tile\n");
+            m_Tiles.erase(std::next(it).base());
+        }
+    }
+}
+
 glm::vec2 TileManager::worldPositionToTilePosition(glm::vec2 position)
 {
     position /= Tile::s_TileSize;

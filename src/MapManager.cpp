@@ -78,7 +78,12 @@ void MapManager::receiveEvent(const Event* event)
                 glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, blockDepth };
                 m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
             }
-
+            if (mpEvent->rightClick)
+            {
+                glm::vec3 ghostPosition = m_GhostTile.getPosition();
+                glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, blockDepth };
+                m_TileManager->removeTile(position);
+            }
             break;
         }
     case EventType::ImGuiRender:

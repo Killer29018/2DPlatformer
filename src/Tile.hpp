@@ -24,6 +24,8 @@ class Tile
     glm::ivec2 getSize() { return m_BlockSize; }
     TileType getType() { return m_Type; }
 
+    bool containsPositionExcludeDepth(glm::vec3 position);
+
     glm::vec3 getWorldPosition();
     glm::vec2 getWorldSize();
 
