@@ -47,7 +47,7 @@ void Application::receiveEvent(const Event* event)
 void Application::initialize()
 {
     m_Camera = Camera{
-        m_Window.getSize(), {0.0f, 0.0f, 100.0f}
+        m_Window.getSize(), {0.0f, 0.0f, 1000.0f}
     };
 
     m_Player = Player(&m_Camera, &m_TileManager);

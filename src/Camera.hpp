@@ -32,5 +32,5 @@ class Camera : public EventObserver
     glm::vec3 m_Position;
 
     float m_NearClipping = 0.01f;
-    float m_FarClipping = 500.0f;
+    float m_FarClipping = 1500.0f;
 };

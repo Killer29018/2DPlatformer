@@ -23,6 +23,8 @@ class MapManager : public EventObserver
     TileManager* m_TileManager;
     Window* m_Window;
 
+    float m_TimeElapsed = 0.0f;
+
     GhostTile m_GhostTile;
     Shader m_GhostShader;
 };

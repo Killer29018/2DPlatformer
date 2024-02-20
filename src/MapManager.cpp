@@ -29,6 +29,9 @@ void MapManager::receiveEvent(const Event* event)
     {
     case EventType::Update:
         {
+            const UpdateEvent* uEvent = reinterpret_cast<const UpdateEvent*>(event);
+            m_TimeElapsed += uEvent->dt;
+
             mousePos = mousePercent;
 
             glm::ivec2 windowSize = m_Window->getSize();
@@ -57,6 +60,7 @@ void MapManager::receiveEvent(const Event* event)
 
             m_TileManager->getTextureMap().bind();
 
+            m_GhostShader.setFloat("u_TimeElapsed", m_TimeElapsed);
             m_GhostShader.setMat4("u_View", renderEvent->camera->getViewMatrix());
             m_GhostShader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
             m_GhostShader.setIVec2("u_TilemapSize",
