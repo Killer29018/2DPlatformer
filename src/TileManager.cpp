@@ -5,6 +5,9 @@
 #include "AABB.hpp"
 #include "Events.hpp"
 #include "Tile.hpp"
+#include "imgui.h"
+
+#include <format>
 #include <iostream>
 
 Shader TileManager::s_Shader;
@@ -135,13 +138,48 @@ void TileManager::receiveEvent(const Event* event)
 
             break;
         }
+    case EventType::ImGuiRender:
+        {
+            if (ImGui::Begin("Tile Manager"))
+            {
+                ImGui::Text("Tile Count: %ld", m_Tiles.size());
+                ImGui::End();
+            }
+        }
     default:
         break;
     }
 }
 void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
 {
-    m_Tiles.emplace_back(position, size, type);
+    auto end = m_Tiles.rend();
+    bool matching = false;
+    for (auto it = m_Tiles.rbegin(); it != end; it++)
+    {
+        // Is there already a block at that position
+        bool containsPosition = it->containsPositionIncludeDepth(position);
+        if (it->getType() == type && containsPosition) matching = true;
+        if (it->getType() != type && containsPosition)
+        {
+            // Expand the tile and add the new tiles to the end of the array
+            // Remove the old tile from the list
+            std::vector<Tile> newTiles = expandTile(*it);
+
+            m_Tiles.erase(std::next(it).base());
+
+            for (const Tile& t : newTiles)
+            {
+                if (t.getPosition() != position)
+                {
+                    m_Tiles.push_back(t);
+                }
+            }
+        }
+    }
+    if (!matching)
+    {
+        m_Tiles.emplace_back(position, size, type);
+    }
 }
 
 void TileManager::removeTile(glm::vec3 position)
@@ -151,25 +189,17 @@ void TileManager::removeTile(glm::vec3 position)
     {
         if (it->containsPositionExcludeDepth(position))
         {
-            // Remove Tile
-            printf("Found Tile\n");
             Tile removedTile = *it;
             m_Tiles.erase(std::next(it).base());
 
-            glm::vec3 removedPosition = removedTile.getPosition();
-            glm::ivec2 removedSize = removedTile.getSize();
-            for (int y = 0; y < removedSize.y; y++)
+            std::vector<Tile> newTiles = expandTile(removedTile);
+
+            for (const Tile& t : newTiles)
             {
-                for (int x = 0; x < removedSize.x; x++)
+                glm::vec3 tPos = t.getPosition();
+                if (tPos.x != position.x || tPos.y != position.y)
                 {
-                    std::cout << "New Tile\n";
-                    glm::vec3 tilePosition = { removedPosition.x + x, removedPosition.y + y,
-                                               removedPosition.z };
-                    if (tilePosition != position)
-                    {
-                        m_Tiles.emplace_back(tilePosition, glm::ivec2{ 1, 1 },
-                                             removedTile.getType());
-                    }
+                    m_Tiles.push_back(t);
                 }
             }
         }
@@ -196,4 +226,21 @@ void TileManager::generateShader()
 
     s_ShaderInitialized = true;
     s_Shader.compileFromPath("res/shaders/tile.vert.glsl", "res/shaders/tile.frag.glsl");
+}
+std::vector<Tile> TileManager::expandTile(Tile tile)
+{
+    glm::vec3 position = tile.getPosition();
+    glm::ivec2 size = tile.getSize();
+    std::vector<Tile> newTiles;
+
+    for (int y = 0; y < size.y; y++)
+    {
+        for (int x = 0; x < size.x; x++)
+        {
+            glm::vec3 tilePosition = { position.x + x, position.y + y, position.z };
+            newTiles.emplace_back(tilePosition, glm::ivec2{ 1, 1 }, tile.getType());
+        }
+    }
+
+    return newTiles;
 }

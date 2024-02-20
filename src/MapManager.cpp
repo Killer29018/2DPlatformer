@@ -18,7 +18,8 @@ void MapManager::receiveEvent(const Event* event)
 {
     static glm::vec2 mousePos;
     static glm::vec2 mousePercent;
-    static float blockDepth;
+
+    static glm::vec3 previousPosition;
 
     switch (event->getType())
     {
@@ -67,31 +68,40 @@ void MapManager::receiveEvent(const Event* event)
 
             break;
         }
+    case EventType::MouseDragged:
+        {
+            const MouseDraggedEvent* mdEvent = reinterpret_cast<const MouseDraggedEvent*>(event);
+
+            if (previousPosition != m_GhostTile.getPosition())
+            {
+                if (mdEvent->leftClick) placeBlock();
+                if (mdEvent->rightClick) removeBlock();
+
+                previousPosition = m_GhostTile.getPosition();
+            }
+
+            break;
+        }
     case EventType::MousePress:
         {
             const MousePressEvent* mpEvent = reinterpret_cast<const MousePressEvent*>(event);
 
             if (mpEvent->leftClick)
             {
-                // Set Block
-                glm::vec3 ghostPosition = m_GhostTile.getPosition();
-                glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, blockDepth };
-                m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
+                placeBlock();
             }
             if (mpEvent->rightClick)
             {
-                glm::vec3 ghostPosition = m_GhostTile.getPosition();
-                glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, blockDepth };
-                m_TileManager->removeTile(position);
+                removeBlock();
             }
+            previousPosition = m_GhostTile.getPosition();
             break;
         }
     case EventType::ImGuiRender:
         {
             if (ImGui::Begin("MapManager"))
             {
-                ImGui::Text("Mouse Pos: (%f, %f)", mousePos.x, mousePos.y);
-                ImGui::Text("Mouse Percent: (%f, %f)", mousePercent.x, mousePercent.y);
+                ImGui::Text("Mouse Tile Pos: (%f, %f)", mousePos.x, mousePos.y);
                 ImGui::End();
             }
             break;
@@ -99,4 +109,17 @@ void MapManager::receiveEvent(const Event* event)
     default:
         break;
     }
+}
+void MapManager::placeBlock()
+{
+    glm::vec3 ghostPosition = m_GhostTile.getPosition();
+    glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, 0.0f };
+    m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
+}
+
+void MapManager::removeBlock()
+{
+    glm::vec3 ghostPosition = m_GhostTile.getPosition();
+    glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, 0.0f };
+    m_TileManager->removeTile(position);
 }

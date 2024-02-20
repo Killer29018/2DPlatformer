@@ -55,7 +55,9 @@ class Window : public EventDispatcher, public EventObserver
     static uint32_t s_Count;
 
     bool m_FirstMouse = true;
-    bool m_MouseCaptured = true;
+
+    bool m_LeftMouseClicked = false;
+    bool m_RightMouseClicked = false;
 
   private:
     void initGLFW(const char* title);

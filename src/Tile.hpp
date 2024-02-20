@@ -20,14 +20,15 @@ class Tile
     void setPosition(glm::vec3 position) { m_Position = position; }
     void setWorldPosition(glm::vec3 position);
 
-    glm::vec3 getPosition() { return m_Position; }
-    glm::ivec2 getSize() { return m_BlockSize; }
-    TileType getType() { return m_Type; }
+    glm::vec3 getPosition() const { return m_Position; }
+    glm::ivec2 getSize() const { return m_BlockSize; }
+    TileType getType() const { return m_Type; }
 
-    bool containsPositionExcludeDepth(glm::vec3 position);
+    bool containsPositionIncludeDepth(glm::vec3 position) const;
+    bool containsPositionExcludeDepth(glm::vec3 position) const;
 
-    glm::vec3 getWorldPosition();
-    glm::vec2 getWorldSize();
+    glm::vec3 getWorldPosition() const;
+    glm::vec2 getWorldSize() const;
 
     static void generateMesh();
 

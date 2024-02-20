@@ -86,13 +86,6 @@ void Window::receiveEvent(const Event* event)
             case GLFW_KEY_ESCAPE:
                 shouldClose(true);
                 break;
-
-            case GLFW_KEY_LEFT_ALT:
-                m_MouseCaptured = !m_MouseCaptured;
-                m_FirstMouse = true;
-                setInputMode(GLFW_CURSOR,
-                             m_MouseCaptured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-                break;
             }
             break;
         }
@@ -189,28 +182,44 @@ void Window::mouseMoveEvent(GLFWwindow* window, double xPos, double yPos)
 
     Window* w = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
-    if (!w->m_MouseCaptured) return;
-
-    MouseMoveEvent moveEvent;
     if (w->m_FirstMouse)
     {
         previousX = xPos;
         previousY = yPos;
         w->m_FirstMouse = false;
     }
-    moveEvent.xOffset = xPos - previousX;
-    moveEvent.yOffset = previousY - yPos;
-
-    moveEvent.xPosition = xPos;
-    moveEvent.yPosition = yPos;
-
-    moveEvent.xPercent = xPos / w->getSize().x;
-    moveEvent.yPercent = yPos / w->getSize().y;
+    double xOffset = xPos - previousX;
+    double yOffset = previousY - yPos;
 
     previousX = xPos;
     previousY = yPos;
 
-    w->notify(&moveEvent);
+    {
+        MouseMoveEvent moveEvent;
+        moveEvent.xOffset = xOffset;
+        moveEvent.yOffset = yOffset;
+
+        moveEvent.xPosition = xPos;
+        moveEvent.yPosition = yPos;
+
+        moveEvent.xPercent = xPos / w->getSize().x;
+        moveEvent.yPercent = yPos / w->getSize().y;
+
+        w->notify(&moveEvent);
+    }
+
+    if (w->m_LeftMouseClicked || w->m_RightMouseClicked)
+    {
+        MouseDraggedEvent mdEvent;
+        mdEvent.xPosition = xPos;
+        mdEvent.yPosition = yPos;
+        mdEvent.xOffset = xOffset;
+        mdEvent.yOffset = yOffset;
+        mdEvent.leftClick = w->m_LeftMouseClicked;
+        mdEvent.rightClick = w->m_RightMouseClicked;
+
+        w->notify(&mdEvent);
+    }
 }
 
 void Window::mouseEnteredEvent(GLFWwindow* window, int entered)
@@ -227,16 +236,49 @@ void Window::mousePressEvent(GLFWwindow* window, int button, int action, int mod
 {
     Window* w = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
-    if (action == GLFW_PRESS)
+    MousePressEvent mpEvent;
+    mpEvent.leftClick = (button == GLFW_MOUSE_BUTTON_LEFT);
+    mpEvent.rightClick = (button == GLFW_MOUSE_BUTTON_RIGHT);
+
+    MouseReleaseEvent mrEvent;
+    mrEvent.leftClick = (button == GLFW_MOUSE_BUTTON_LEFT);
+    mrEvent.rightClick = (button == GLFW_MOUSE_BUTTON_RIGHT);
+
+    bool pressed = (action == GLFW_PRESS);
+    bool released = (action == GLFW_RELEASE);
+
+    if (w->m_LeftMouseClicked)
     {
-        MousePressEvent event;
-        event.leftClick = false;
-        event.rightClick = false;
+        w->m_LeftMouseClicked = !(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE);
+    }
+    else
+    {
+        w->m_LeftMouseClicked = (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS);
+    }
 
-        if (button == GLFW_MOUSE_BUTTON_LEFT) event.leftClick = true;
-        if (button == GLFW_MOUSE_BUTTON_RIGHT) event.rightClick = true;
+    if (w->m_RightMouseClicked)
+    {
+        w->m_RightMouseClicked = !(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE);
+    }
+    else
+    {
+        w->m_RightMouseClicked = (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS);
+    }
 
-        w->notify(&event);
+    double xPos, yPos;
+    glfwGetCursorPos(window, &xPos, &yPos);
+    if (pressed)
+    {
+        mpEvent.xPosition = xPos;
+        mpEvent.yPosition = yPos;
+        w->notify(&mpEvent);
+    }
+
+    if (released)
+    {
+        mrEvent.xPosition = xPos;
+        mrEvent.yPosition = yPos;
+        w->notify(&mrEvent);
     }
 }
 
@@ -244,12 +286,13 @@ void Window::windowResizeEvent(GLFWwindow* window, int width, int height)
 {
     Window* w = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
-    WindowResizeEvent event;
     glm::ivec2 size = w->getSize();
-    event.previousWidth = size.x;
-    event.previousHeight = size.y;
-    event.newWidth = width;
-    event.newHeight = height;
 
-    w->notify(&event);
+    WindowResizeEvent wrEvent;
+    wrEvent.previousWidth = size.x;
+    wrEvent.previousHeight = size.y;
+    wrEvent.newWidth = width;
+    wrEvent.newHeight = height;
+
+    w->notify(&wrEvent);
 }

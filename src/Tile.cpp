@@ -43,7 +43,12 @@ void Tile::setWorldPosition(glm::vec3 position)
     m_Position = glm::vec3(position.x / s_TileSize, position.y / s_TileSize, position.z);
 }
 
-bool Tile::containsPositionExcludeDepth(glm::vec3 position)
+bool Tile::containsPositionIncludeDepth(glm::vec3 position) const
+{
+    return getPosition().z == position.z && containsPositionExcludeDepth(position);
+}
+
+bool Tile::containsPositionExcludeDepth(glm::vec3 position) const
 {
     glm::vec3 pos = getPosition();
     glm::vec2 size = getSize();
@@ -52,12 +57,12 @@ bool Tile::containsPositionExcludeDepth(glm::vec3 position)
             pos.y <= position.y && pos.y + size.y > position.y);
 }
 
-glm::vec3 Tile::getWorldPosition()
+glm::vec3 Tile::getWorldPosition() const
 {
     return glm::vec3(m_Position.x * s_TileSize, m_Position.y * s_TileSize, m_Position.z);
 }
 
-glm::vec2 Tile::getWorldSize()
+glm::vec2 Tile::getWorldSize() const
 {
     return glm::vec2(m_BlockSize.x * s_TileSize, m_BlockSize.y * s_TileSize);
 }

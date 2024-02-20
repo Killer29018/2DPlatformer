@@ -15,6 +15,10 @@ class MapManager : public EventObserver
     void receiveEvent(const Event* event) override;
 
   private:
+    void placeBlock();
+    void removeBlock();
+
+  private:
     Player* m_Player;
     TileManager* m_TileManager;
     Window* m_Window;

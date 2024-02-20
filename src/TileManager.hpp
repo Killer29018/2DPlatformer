@@ -34,15 +34,17 @@ class TileManager : public EventObserver
     static glm::vec2 tilePositionToWorldPosition(glm::vec2 position);
 
   private:
+    static void generateShader();
+
+    std::vector<Tile> expandTile(Tile tile);
+
+  private:
     std::vector<Tile> m_Tiles;
 
     static Shader s_Shader;
     static bool s_ShaderInitialized;
 
     TextureMap m_TextureMap;
-
-  private:
-    static void generateShader();
 
     const glm::ivec2 m_TileSize{ 32, 32 };
 };
