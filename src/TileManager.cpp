@@ -5,7 +5,7 @@
 #include "AABB.hpp"
 #include "Events.hpp"
 #include "Tile.hpp"
-#include "imgui.h"
+#include <iostream>
 
 Shader TileManager::s_Shader;
 bool TileManager::s_ShaderInitialized = false;
@@ -146,13 +146,32 @@ void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
 
 void TileManager::removeTile(glm::vec3 position)
 {
-    for (auto it = m_Tiles.rbegin(); it != m_Tiles.rend(); it++)
+    auto end = m_Tiles.rend();
+    for (auto it = m_Tiles.rbegin(); it != end; it++)
     {
         if (it->containsPositionExcludeDepth(position))
         {
             // Remove Tile
             printf("Found Tile\n");
+            Tile removedTile = *it;
             m_Tiles.erase(std::next(it).base());
+
+            glm::vec3 removedPosition = removedTile.getPosition();
+            glm::ivec2 removedSize = removedTile.getSize();
+            for (int y = 0; y < removedSize.y; y++)
+            {
+                for (int x = 0; x < removedSize.x; x++)
+                {
+                    std::cout << "New Tile\n";
+                    glm::vec3 tilePosition = { removedPosition.x + x, removedPosition.y + y,
+                                               removedPosition.z };
+                    if (tilePosition != position)
+                    {
+                        m_Tiles.emplace_back(tilePosition, glm::ivec2{ 1, 1 },
+                                             removedTile.getType());
+                    }
+                }
+            }
         }
     }
 }

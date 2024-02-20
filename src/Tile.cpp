@@ -48,8 +48,8 @@ bool Tile::containsPositionExcludeDepth(glm::vec3 position)
     glm::vec3 pos = getPosition();
     glm::vec2 size = getSize();
 
-    return (pos.x <= position.x && pos.x + size.x >= position.x && //
-            pos.y <= position.y && pos.y + size.y >= position.y);
+    return (pos.x <= position.x && pos.x + size.x > position.x && //
+            pos.y <= position.y && pos.y + size.y > position.y);
 }
 
 glm::vec3 Tile::getWorldPosition()
