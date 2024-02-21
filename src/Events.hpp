@@ -21,7 +21,9 @@ enum class EventType : std::size_t {
     WindowClose,
 
     ImGuiRender,
-    SaveGame
+
+    SaveGame,
+    LoadGame
 };
 
 struct Event {
@@ -166,6 +168,16 @@ struct ImGuiRenderEvent : public Event {
 struct SaveGameEvent : public Event {
   public:
     static constexpr EventType type = EventType::SaveGame;
+
+    Json::Value* root;
+
+  public:
+    virtual EventType getType() const { return type; }
+};
+
+struct LoadGameEvent : public Event {
+  public:
+    static constexpr EventType type = EventType::LoadGame;
 
     Json::Value* root;
 

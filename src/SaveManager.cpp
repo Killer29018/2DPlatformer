@@ -27,3 +27,17 @@ void SaveManager::saveGame()
 
     std::cout << "Saved\n";
 }
+
+void SaveManager::loadGame()
+{
+    std::ifstream input{ "saves/data.json", std::ios::in };
+    Json::Value root;
+
+    input >> root;
+    input.close();
+
+    LoadGameEvent lgEvent;
+    lgEvent.root = &root;
+
+    notify(&lgEvent);
+}

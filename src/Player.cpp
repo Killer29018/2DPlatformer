@@ -190,6 +190,16 @@ void Player::receiveEvent(const Event* event)
             (*sgEvent->root)["player"] = playerRoot;
             break;
         }
+    case EventType::LoadGame:
+        {
+            const LoadGameEvent* lgEvent = reinterpret_cast<const LoadGameEvent*>(event);
+
+            Json::Value playerRoot = (*lgEvent->root)["player"];
+            m_Position.x = playerRoot["position"]["x"].asFloat();
+            m_Position.y = playerRoot["position"]["y"].asFloat();
+
+            break;
+        }
     default:
         break;
     }

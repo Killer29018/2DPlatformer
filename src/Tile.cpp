@@ -11,13 +11,11 @@ Tile::Tile() : m_Position(0.0, 0.0, 0.0), m_BlockSize(1, 1), m_Type(TileType::NO
 
 Tile::Tile(glm::vec3 position, TileType map) : m_Position(position), m_BlockSize(1, 1), m_Type(map)
 {
-    generateMesh();
 }
 
 Tile::Tile(glm::vec3 position, glm::ivec2 blockSize, TileType map)
     : m_Position(position), m_BlockSize(blockSize), m_Type(map)
 {
-    generateMesh();
 }
 
 void Tile::render(Shader& shader)
@@ -56,6 +54,18 @@ Json::Value Tile::getSaveState()
     root["tileType"] = static_cast<int>(m_Type);
 
     return root;
+}
+
+void Tile::loadSaveState(Json::Value root)
+{
+    m_Position.x = root["position"]["x"].asFloat();
+    m_Position.y = root["position"]["y"].asFloat();
+    m_Position.z = root["position"]["z"].asFloat();
+
+    m_BlockSize.x = root["size"]["x"].asInt();
+    m_BlockSize.y = root["size"]["y"].asInt();
+
+    m_Type = static_cast<TileType>(root["tileType"].asInt());
 }
 
 bool Tile::containsPositionIncludeDepth(glm::vec3 position) const

@@ -40,6 +40,8 @@ void TileManager::generateMap()
 {
     generateShader();
 
+    Tile::generateMesh();
+
     m_Tiles = {
         {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
         { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
@@ -158,6 +160,23 @@ void TileManager::receiveEvent(const Event* event)
             }
 
             (*sgEvent->root)["Tiles"] = tileRoot;
+
+            break;
+        }
+    case EventType::LoadGame:
+        {
+            const LoadGameEvent* lgEvent = reinterpret_cast<const LoadGameEvent*>(event);
+
+            Json::Value tiles = (*lgEvent->root)["Tiles"];
+
+            m_Tiles.clear();
+            for (Json::Value tile : tiles)
+            {
+                Tile t;
+                t.loadSaveState(tile);
+
+                m_Tiles.push_back(t);
+            }
 
             break;
         }

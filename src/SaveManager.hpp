@@ -10,4 +10,5 @@ class SaveManager : public EventDispatcher
 
   public:
     void saveGame();
+    void loadGame();
 };

@@ -23,6 +23,7 @@ class Tile
     void setWorldPosition(glm::vec3 position);
 
     Json::Value getSaveState();
+    void loadSaveState(Json::Value tile);
 
     glm::vec3 getPosition() const { return m_Position; }
     glm::ivec2 getSize() const { return m_BlockSize; }
