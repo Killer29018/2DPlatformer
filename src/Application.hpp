@@ -5,6 +5,7 @@
 #include "ImGuiManager.hpp"
 #include "MapManager.hpp"
 #include "Player.hpp"
+#include "SaveManager.hpp"
 #include "Shader.hpp"
 #include "TileManager.hpp"
 #include "Window.hpp"
@@ -30,6 +31,8 @@ class Application : public EventDispatcher, public EventObserver
     Camera m_Camera;
 
     ImGuiManager m_ImGuiManager;
+
+    SaveManager m_SaveManager;
 
     float m_PreviousDT;
 

@@ -12,3 +12,6 @@
 	path = vendor/imgui
 	url = https://github.com/killer29018/imgui
 	branch = docking-opengl-glfw
+[submodule "vendor/jsoncpp"]
+	path = vendor/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp

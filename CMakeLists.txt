@@ -45,6 +45,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${linker} PUBLIC
     glfw
     Imgui
     STB
+    jsoncpp
 )
 
 set (InputRes "${PROJECT_SOURCE_DIR}/res")
@@ -56,7 +57,7 @@ add_custom_command(
     TARGET Resources POST_BUILD
     COMMAND
     cmake -E make_directory
-    "${OutputRes}/shaders/" "${OutputRes}/fonts/" "${OutputRes}/textures/"
+    "${OutputRes}/shaders/" "${OutputRes}/fonts/" "${OutputRes}/textures/" "${outputDirectory}/saves/"
     COMMENT "Create resource folder at ${OutputRes}"
 )
 
@@ -74,6 +75,14 @@ add_custom_command(
     cmake -E copy_directory
     "${InputRes}/fonts/" "${OutputRes}/fonts"
     COMMENT "Copied Fonts from ${InputRes}/fonts/ To ${OutputRes}/fonts"
+)
+
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
+    cmake -E copy_directory
+    "${PROJECT_SOURCE_DIR}/saves/" "${outputDirectory}/saves/"
+    COMMENT "Copied Saves from ${PROJECT_SOURCE_DIR}/saves/ To ${outputDirectory}/saves/"
 )
 
 file (GLOB RESOURCES_TEXTURES "${InputRes}/textures/*.png")

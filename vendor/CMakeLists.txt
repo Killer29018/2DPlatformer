@@ -1,6 +1,3 @@
-add_subdirectory(glad/cmake)
-glad_add_library(glad STATIC API gl:core=4.6)
-
 set(GLM_QUIET OFF CACHE BOOL "" FORCE)
 set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
 add_subdirectory(glm)
@@ -13,6 +10,23 @@ add_subdirectory(glfw)
 set_target_properties(glfw PROPERTIES FOLDER vendor)
 
 add_subdirectory(imgui)
+
+set(JSONCPP_WITH_TESTS                  off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_POST_BUILD_UNITTEST    off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_WARNING_AS_ERROR       off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_STRICT_ISO             off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_PKGCONFIG_SUPPORT      off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_CMAKE_PACKAGE          off CACHE BOOL "" FORCE)
+set(JSONCPP_WITH_EXAMPLE                off CACHE BOOL "" FORCE)
+set(JSONCPP_STATIC_WINDOWS_RUNTIME      off CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS                   off CACHE BOOL "" FORCE)
+set(BUILD_STATIC_LIBS                   off CACHE BOOL "" FORCE)
+set(BUILD_OBJECT_LIBS                   off CACHE BOOL "" FORCE)
+add_subdirectory(jsoncpp)
+
+add_subdirectory(glad/cmake)
+glad_add_library(glad STATIC API gl:core=4.6)
+
 
 project (STB LANGUAGES CXX)
 file(GLOB_RECURSE stbFiles CONFIGURE_DEPENDS "stb/*.h")
