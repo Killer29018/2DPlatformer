@@ -85,6 +85,9 @@ void Window::receiveEvent(const Event* event)
             switch (keyEvent->key)
             {
             case GLFW_KEY_ESCAPE:
+                WindowCloseEvent wcEvent;
+                notify(&wcEvent);
+
                 shouldClose(true);
                 break;
             }

@@ -145,6 +145,21 @@ void TileManager::receiveEvent(const Event* event)
                 ImGui::Text("Tile Count: %ld", m_Tiles.size());
                 ImGui::End();
             }
+            break;
+        }
+    case EventType::SaveGame:
+        {
+            const SaveGameEvent* sgEvent = reinterpret_cast<const SaveGameEvent*>(event);
+            Json::Value tileRoot;
+
+            for (size_t i = 0; i < m_Tiles.size(); i++)
+            {
+                tileRoot[(uint32_t)i] = m_Tiles[i].getSaveState();
+            }
+
+            (*sgEvent->root)["Tiles"] = tileRoot;
+
+            break;
         }
     default:
         break;

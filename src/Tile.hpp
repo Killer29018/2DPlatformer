@@ -4,6 +4,7 @@
 
 #include "Shader.hpp"
 #include "TileTypes.hpp"
+#include "json/json.h"
 
 class Tile
 {
@@ -20,6 +21,8 @@ class Tile
     void setPosition(glm::vec3 position) { m_Position = position; }
     void setDepth(float depth) { m_Position.z = depth; }
     void setWorldPosition(glm::vec3 position);
+
+    Json::Value getSaveState();
 
     glm::vec3 getPosition() const { return m_Position; }
     glm::ivec2 getSize() const { return m_BlockSize; }

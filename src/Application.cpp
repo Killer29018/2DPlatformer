@@ -39,6 +39,11 @@ void Application::receiveEvent(const Event* event)
 
             break;
         }
+    case EventType::WindowClose:
+        {
+            m_SaveManager.saveGame();
+            break;
+        }
     default:
         break;
     }
@@ -57,9 +62,11 @@ void Application::initialize()
     m_ImGuiManager = ImGuiManager(&m_Window);
     m_MapManager = MapManager(&m_Player, &m_TileManager, &m_Window);
 
+    m_Window.attach(this);
     m_Window.attach(&m_Camera);
     m_Window.attach(&m_Player);
     m_Window.attach(&m_MapManager);
+
     attach(&m_Player);
     attach(&m_TileManager);
     attach(&m_MapManager);
@@ -70,9 +77,10 @@ void Application::initialize()
     m_ImGuiManager.attach(&m_Player);
     m_ImGuiManager.attach(&m_MapManager);
 
-    m_TileManager.generateMap();
+    m_SaveManager.attach(&m_Player);
+    m_SaveManager.attach(&m_TileManager);
 
-    m_SaveManager.saveGame();
+    m_TileManager.generateMap();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

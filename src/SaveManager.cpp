@@ -11,9 +11,12 @@ void SaveManager::saveGame()
     builder["indentation"] = "    ";
 
     Json::Value root;
-    // Emit Event
 
-    root["test"]["test2"]["test3"] = 3;
+    // Emit Event
+    SaveGameEvent sgEvent;
+    sgEvent.root = &root;
+
+    notify(&sgEvent);
 
     std::ofstream output{ "saves/data.json", std::ios::in | std::ios::trunc };
 

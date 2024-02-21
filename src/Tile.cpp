@@ -43,6 +43,21 @@ void Tile::setWorldPosition(glm::vec3 position)
     m_Position = glm::vec3(position.x / s_TileSize, position.y / s_TileSize, position.z);
 }
 
+Json::Value Tile::getSaveState()
+{
+    Json::Value root;
+    root["position"]["x"] = m_Position.x;
+    root["position"]["y"] = m_Position.y;
+    root["position"]["z"] = m_Position.z;
+
+    root["size"]["x"] = m_BlockSize.x;
+    root["size"]["y"] = m_BlockSize.y;
+
+    root["tileType"] = static_cast<int>(m_Type);
+
+    return root;
+}
+
 bool Tile::containsPositionIncludeDepth(glm::vec3 position) const
 {
     return getPosition().z == position.z && containsPositionExcludeDepth(position);

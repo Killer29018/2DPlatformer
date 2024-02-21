@@ -179,6 +179,17 @@ void Player::receiveEvent(const Event* event)
             }
             break;
         }
+    case EventType::SaveGame:
+        {
+            const SaveGameEvent* sgEvent = reinterpret_cast<const SaveGameEvent*>(event);
+            Json::Value playerRoot;
+
+            playerRoot["position"]["x"] = m_Position.x;
+            playerRoot["position"]["y"] = m_Position.y;
+
+            (*sgEvent->root)["player"] = playerRoot;
+            break;
+        }
     default:
         break;
     }

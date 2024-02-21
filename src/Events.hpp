@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "json/json.h"
 
 class Camera;
 
@@ -8,14 +8,20 @@ enum class EventType : std::size_t {
     Event,
     Update,
     Render,
+
     KeyboardPress,
+
     MouseMove,
     MouseEnter,
     MousePress,
     MouseRelease,
     MouseDragged,
+
     WindowResize,
-    ImGuiRender
+    WindowClose,
+
+    ImGuiRender,
+    SaveGame
 };
 
 struct Event {
@@ -141,9 +147,27 @@ struct WindowResizeEvent : public Event {
     virtual EventType getType() const { return type; }
 };
 
+struct WindowCloseEvent : public Event {
+  public:
+    static constexpr EventType type = EventType::WindowClose;
+
+  public:
+    virtual EventType getType() const { return type; }
+};
+
 struct ImGuiRenderEvent : public Event {
   public:
     static constexpr EventType type = EventType::ImGuiRender;
+
+  public:
+    virtual EventType getType() const { return type; }
+};
+
+struct SaveGameEvent : public Event {
+  public:
+    static constexpr EventType type = EventType::SaveGame;
+
+    Json::Value* root;
 
   public:
     virtual EventType getType() const { return type; }
