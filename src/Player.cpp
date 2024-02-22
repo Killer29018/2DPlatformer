@@ -1,8 +1,10 @@
 #include "Player.hpp"
-#include "Events.hpp"
+
 #include "GLFW/glfw3.h"
-#include "TileManager.hpp"
 #include "glad/gl.h"
+
+#include "events/Events.hpp"
+#include "tiles/TileManager.hpp"
 #include <format>
 #include <iostream>
 

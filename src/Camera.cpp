@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-#include "Events.hpp"
+#include "events/Events.hpp"
 
 Camera::Camera() : m_WindowSize({ 0, 0 }), m_Position({ 0.0f, 0.0f, 0.0f }) {}
 

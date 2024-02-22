@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventHandler.hpp"
+#include "events/EventHandler.hpp"
 #include "json/writer.h"
 
 class SaveManager : public EventDispatcher

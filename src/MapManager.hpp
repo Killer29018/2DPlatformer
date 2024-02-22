@@ -1,10 +1,10 @@
 #pragma once
 
-#include "EventHandler.hpp"
-#include "GhostTile.hpp"
 #include "Player.hpp"
-#include "TileManager.hpp"
 #include "Window.hpp"
+#include "events/EventHandler.hpp"
+#include "tiles/GhostTile.hpp"
+#include "tiles/TileManager.hpp"
 
 class MapManager : public EventObserver
 {

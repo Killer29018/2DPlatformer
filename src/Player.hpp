@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "EventHandler.hpp"
-#include "Tile.hpp"
-#include "TileManager.hpp"
+#include "events/EventHandler.hpp"
+#include "resources/Texture2D.hpp"
+#include "tiles/Tile.hpp"
+#include "tiles/TileManager.hpp"
+
 #include <glm/glm.hpp>
 
 class Player : public EventObserver

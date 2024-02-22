@@ -8,7 +8,7 @@ SaveManager::SaveManager() {}
 void SaveManager::saveGame()
 {
     Json::StreamWriterBuilder builder;
-    builder["indentation"] = "    ";
+    builder["indentation"] = "";
 
     Json::Value root;
 

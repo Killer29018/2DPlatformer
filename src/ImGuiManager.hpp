@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventHandler.hpp"
+#include "events/EventHandler.hpp"
 #include "imgui.h"
 
 #include "Window.hpp"

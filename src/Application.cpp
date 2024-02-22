@@ -1,13 +1,14 @@
 #include "Application.hpp"
-#include "EventHandler.hpp"
-#include "Events.hpp"
+
 #include "GLFW/glfw3.h"
 #include "glad/gl.h"
-#include <memory>
-
 #include <GL/gl.h>
+
+#include "events/Events.hpp"
+
 #include <algorithm>
 #include <format>
+#include <memory>
 
 Application::Application(glm::ivec2 windowSize, const char* title)
     : m_Window(Window(windowSize, title))

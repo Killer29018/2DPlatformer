@@ -1,11 +1,13 @@
 #pragma once
 
-#include "EventHandler.hpp"
-#include "Events.hpp"
-#include "GhostTile.hpp"
-#include "Shader.hpp"
-#include "TextureMap.hpp"
 #include "Tile.hpp"
+
+#include "../events/EventHandler.hpp"
+#include "../events/Events.hpp"
+
+#include "../resources/Shader.hpp"
+#include "../resources/TextureMap.hpp"
+
 #include <vector>
 
 class TileManager : public EventObserver

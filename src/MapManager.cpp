@@ -1,8 +1,8 @@
 #include "MapManager.hpp"
 
-#include "Events.hpp"
-#include "TileTypes.hpp"
+#include "events/Events.hpp"
 #include "imgui.h"
+#include "tiles/TileTypes.hpp"
 
 #include <format>
 #include <iostream>

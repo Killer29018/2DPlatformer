@@ -1,13 +1,12 @@
 #include "Window.hpp"
-#include "EventHandler.hpp"
-#include "Events.hpp"
-#include "GLFW/glfw3.h"
 
+#include "GLFW/glfw3.h"
 #include "imgui.h"
 #include <GL/gl.h>
-#include <algorithm>
-#include <format>
+
 #include <iostream>
+
+#include "events/Events.hpp"
 
 uint32_t Window::s_Count = 0;
 

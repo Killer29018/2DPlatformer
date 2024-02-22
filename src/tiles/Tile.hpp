@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Shader.hpp"
+#include "../resources/Shader.hpp"
 #include "TileTypes.hpp"
 #include "json/json.h"
 

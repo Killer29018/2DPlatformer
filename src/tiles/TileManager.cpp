@@ -1,11 +1,11 @@
 #include "TileManager.hpp"
 
-#include "Camera.hpp"
-
-#include "AABB.hpp"
-#include "Events.hpp"
-#include "Tile.hpp"
 #include "imgui.h"
+
+#include "../AABB.hpp"
+#include "../Camera.hpp"
+#include "../events/Events.hpp"
+#include "../tiles/Tile.hpp"
 
 #include <format>
 #include <iostream>

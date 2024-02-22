@@ -6,10 +6,9 @@
 #include <glm/glm.hpp>
 
 #include <exception>
-#include <list>
 #include <optional>
 
-#include "EventHandler.hpp"
+#include "events/EventHandler.hpp"
 
 class window_existence_error : public std::exception
 {

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "EventHandler.hpp"
 #include "ImGuiManager.hpp"
 #include "MapManager.hpp"
 #include "Player.hpp"
 #include "SaveManager.hpp"
-#include "Shader.hpp"
-#include "TileManager.hpp"
 #include "Window.hpp"
+#include "events/EventHandler.hpp"
+#include "resources/Shader.hpp"
+#include "tiles/TileManager.hpp"
 
 class Application : public EventDispatcher, public EventObserver
 {
