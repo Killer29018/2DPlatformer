@@ -7,11 +7,9 @@
 #include "../events/Events.hpp"
 #include "../tiles/Tile.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-
 #include <format>
 #include <iostream>
+#include <vector>
 
 Shader TileManager::s_Shader;
 bool TileManager::s_ShaderInitialized = false;
@@ -44,6 +42,41 @@ void TileManager::generateMap()
     generateShader();
 
     Tile::generateMesh();
+
+    std::vector<Tile> tempTiles = {
+
+        {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
+        { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
+        { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
+
+        { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { -4.0f, -3.0f, 0.0f },  { 9, 3 }, TileType::STONE_CENTER          },
+        { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+
+        { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+
+        { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
+        { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
+        { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
+
+        { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
+        { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
+        { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
+
+        { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+        { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+
+        { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+    };
+    for (const Tile& t : tempTiles)
+    {
+        m_Tiles.insert(std::make_pair(t.getPosition(), t));
+    }
 
     m_TextureMap.compileFromPath("res/textures/Tilemap.png", 32, 32);
 }
@@ -107,6 +140,15 @@ void TileManager::receiveEvent(const Event* event)
             s_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
             s_Shader.setIVec2("u_TilemapSize", m_TextureMap.getTileDimensions());
 
+            if (m_ShowTileBlock)
+            {
+                s_Shader.setInt("u_ShowBlock", 1);
+            }
+            else
+            {
+                s_Shader.setInt("u_ShowBlock", 0);
+            }
+
             for (auto& pair : m_Tiles)
             {
                 pair.second.render(s_Shader);
@@ -119,6 +161,12 @@ void TileManager::receiveEvent(const Event* event)
             if (ImGui::Begin("Tile Manager"))
             {
                 ImGui::Text("Tile Count: %ld", m_Tiles.size());
+
+                if (ImGui::Button("Toggle Block view"))
+                {
+                    m_ShowTileBlock = !m_ShowTileBlock;
+                }
+
                 ImGui::End();
             }
             break;
@@ -131,7 +179,7 @@ void TileManager::receiveEvent(const Event* event)
             uint32_t index = 0;
             for (auto& t : m_Tiles)
             {
-                tileRoot[index] = t.second.getSaveState();
+                tileRoot[index++] = t.second.getSaveState();
             }
 
             (*sgEvent->root)["Tiles"] = tileRoot;
@@ -261,6 +309,7 @@ void TileManager::generateShader()
     s_ShaderInitialized = true;
     s_Shader.compileFromPath("res/shaders/tile.vert.glsl", "res/shaders/tile.frag.glsl");
 }
+
 std::vector<Tile> TileManager::expandTile(Tile tile)
 {
     glm::vec3 position = tile.getPosition();

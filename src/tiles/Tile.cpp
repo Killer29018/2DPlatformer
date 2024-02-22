@@ -2,6 +2,9 @@
 
 #include <glad/gl.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 uint32_t Tile::s_VertexCount = 0;
 uint32_t Tile::s_VAO;
 uint32_t Tile::s_VBO;
@@ -30,6 +33,8 @@ void Tile::render(Shader& shader)
     shader.setIVec2("u_TileIndex", TileTypeToVec.at(m_Type));
 
     shader.setIVec2("u_TileSize", m_BlockSize);
+
+    shader.setInt("u_BlockID", (int)std::hash<glm::vec3>{}(m_Position));
 
     glBindVertexArray(s_VAO);
 

@@ -1,5 +1,6 @@
 #include "SaveManager.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -30,6 +31,8 @@ void SaveManager::saveGame()
 
 void SaveManager::loadGame()
 {
+    if (!std::filesystem::exists("saves/data.json")) return;
+
     std::ifstream input{ "saves/data.json", std::ios::in };
     Json::Value root;
 

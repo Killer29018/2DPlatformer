@@ -9,6 +9,9 @@ uniform ivec2 u_TileIndex;
 
 uniform ivec2 u_TileSize;
 
+uniform int u_ShowBlock;
+uniform int u_BlockID;
+
 uniform sampler2DArray u_Texture;
 
 void main()
@@ -20,9 +23,21 @@ void main()
 
     vec3 texcoord = vec3(texcoord_2d.xy, tileIndex);
 
-    f_Colour = texture(u_Texture, texcoord);
-    // f_Colour = vec4(texcoord, 1.0);
 
-    if (f_Colour.a == 0)
-        discard;
+    if (u_ShowBlock == 1)
+    {
+        float a = 1;
+        float b = ((u_BlockID >>  0) & 0xFF) / 255.;
+        float g = ((u_BlockID >>  8) & 0xFF) / 255.;
+        float r = ((u_BlockID >> 16) & 0xFF) / 255.;
+        f_Colour = vec4(r, g, b, a);
+    }
+    else
+    {
+        f_Colour = texture(u_Texture, texcoord);
+
+        if (f_Colour.a == 0)
+            discard;
+    }
+
 }

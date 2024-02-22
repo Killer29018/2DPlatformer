@@ -48,6 +48,8 @@ class TileManager : public EventObserver
   private:
     std::unordered_map<glm::vec3, Tile> m_Tiles;
 
+    bool m_ShowTileBlock = false;
+
     static Shader s_Shader;
     static bool s_ShaderInitialized;
 
