@@ -8,7 +8,11 @@
 #include "../resources/Shader.hpp"
 #include "../resources/TextureMap.hpp"
 
-#include <vector>
+#include <unordered_map>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>
 
 class TileManager : public EventObserver
 {
@@ -28,6 +32,7 @@ class TileManager : public EventObserver
     glm::vec4 checkCollision(glm::vec3 previousPosition, glm::vec2 size, glm::vec2 velocity);
 
     void setTile(glm::vec3 position, glm::ivec2 size, TileType type);
+    std::optional<Tile> getTile(glm::vec3 position);
     void removeTile(glm::vec3 position);
 
     void receiveEvent(const Event* event) override;
@@ -41,7 +46,7 @@ class TileManager : public EventObserver
     std::vector<Tile> expandTile(Tile tile);
 
   private:
-    std::vector<Tile> m_Tiles;
+    std::unordered_map<glm::vec3, Tile> m_Tiles;
 
     static Shader s_Shader;
     static bool s_ShaderInitialized;

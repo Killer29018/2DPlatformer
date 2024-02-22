@@ -7,6 +7,9 @@
 #include "../events/Events.hpp"
 #include "../tiles/Tile.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 #include <format>
 #include <iostream>
 
@@ -42,36 +45,6 @@ void TileManager::generateMap()
 
     Tile::generateMesh();
 
-    m_Tiles = {
-        {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
-        { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
-        { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
-
-        { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { -4.0f, -3.0f, 0.0f },  { 9, 3 }, TileType::STONE_CENTER          },
-        { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-
-        { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
-
-        { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
-        { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
-        { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
-
-        { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
-        { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
-        { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
-
-        { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
-        { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-
-        { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
-    };
-
     m_TextureMap.compileFromPath("res/textures/Tilemap.png", 32, 32);
 }
 
@@ -83,8 +56,9 @@ glm::vec4 TileManager::checkCollision(glm::vec3 previousPosition, glm::vec2 size
     const int iterations = 2;
     for (int i = 0; i < iterations; i++)
     {
-        for (Tile& t : m_Tiles)
+        for (auto& pair : m_Tiles)
         {
+            Tile t = pair.second;
             glm::vec3 position = t.getWorldPosition();
 
             if (previousPosition.z != position.z) continue;
@@ -133,9 +107,9 @@ void TileManager::receiveEvent(const Event* event)
             s_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
             s_Shader.setIVec2("u_TilemapSize", m_TextureMap.getTileDimensions());
 
-            for (Tile& t : m_Tiles)
+            for (auto& pair : m_Tiles)
             {
-                t.render(s_Shader);
+                pair.second.render(s_Shader);
             }
 
             break;
@@ -154,9 +128,10 @@ void TileManager::receiveEvent(const Event* event)
             const SaveGameEvent* sgEvent = reinterpret_cast<const SaveGameEvent*>(event);
             Json::Value tileRoot;
 
-            for (size_t i = 0; i < m_Tiles.size(); i++)
+            uint32_t index = 0;
+            for (auto& t : m_Tiles)
             {
-                tileRoot[(uint32_t)i] = m_Tiles[i].getSaveState();
+                tileRoot[index] = t.second.getSaveState();
             }
 
             (*sgEvent->root)["Tiles"] = tileRoot;
@@ -175,7 +150,7 @@ void TileManager::receiveEvent(const Event* event)
                 Tile t;
                 t.loadSaveState(tile);
 
-                m_Tiles.push_back(t);
+                m_Tiles.insert(std::make_pair(t.getPosition(), t));
             }
 
             break;
@@ -186,46 +161,66 @@ void TileManager::receiveEvent(const Event* event)
 }
 void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
 {
-    auto end = m_Tiles.rend();
-    for (auto it = m_Tiles.rbegin(); it != end; it++)
+    auto end = m_Tiles.end();
+    auto it = m_Tiles.begin();
+    while (it != end)
     {
+        Tile t = it->second;
         // Is there already a block at that position
-        bool matchingDepth = it->containsPositionIncludeDepth(position);
-        bool matching = it->containsPositionExcludeDepth(position);
+        bool matchingDepth = t.containsPositionIncludeDepth(position);
+        bool matching = t.containsPositionExcludeDepth(position);
 
-        bool replace = (matching && !matchingDepth && it->getType() == type) ||
-                       (matchingDepth && it->getType() != type);
+        bool replace = (matching && !matchingDepth && t.getType() == type) ||
+                       (matchingDepth && t.getType() != type);
 
         if (replace)
         {
             // Expand the tile and add the new tiles to the end of the array
             // Remove the old tile from the list
 
-            std::vector<Tile> newTiles = expandTile(*it);
-            m_Tiles.erase(std::next(it).base());
+            std::vector<Tile> newTiles = expandTile(t);
+            m_Tiles.erase(it);
 
             for (const Tile& t : newTiles)
             {
                 glm::vec3 tilePos = t.getPosition();
                 if (tilePos.x != position.x || tilePos.y != position.y)
                 {
-                    m_Tiles.push_back(t);
+                    m_Tiles.insert(std::make_pair(t.getPosition(), t));
                 }
             }
         }
+        else
+        {
+            it++;
+        }
     }
-    m_Tiles.emplace_back(position, size, type);
+
+    m_Tiles.insert(std::make_pair(position, Tile{ position, size, type }));
+}
+
+std::optional<Tile> TileManager::getTile(glm::vec3 position)
+{
+    std::optional<Tile> t;
+    auto pos = m_Tiles.find(position);
+    if (pos != m_Tiles.end())
+    {
+        t = m_Tiles.at(position);
+    }
+    return t;
 }
 
 void TileManager::removeTile(glm::vec3 position)
 {
-    auto end = m_Tiles.rend();
-    for (auto it = m_Tiles.rbegin(); it != end; it++)
+    auto end = m_Tiles.end();
+    auto it = m_Tiles.begin();
+    while (it != end)
     {
-        if (it->containsPositionExcludeDepth(position))
+        Tile t = it->second;
+        if (t.containsPositionExcludeDepth(position))
         {
-            Tile removedTile = *it;
-            m_Tiles.erase(std::next(it).base());
+            Tile removedTile = t;
+            m_Tiles.erase(it);
 
             std::vector<Tile> newTiles = expandTile(removedTile);
 
@@ -234,9 +229,13 @@ void TileManager::removeTile(glm::vec3 position)
                 glm::vec3 tPos = t.getPosition();
                 if (tPos.x != position.x || tPos.y != position.y)
                 {
-                    m_Tiles.push_back(t);
+                    m_Tiles.insert(std::make_pair(t.getPosition(), t));
                 }
             }
+        }
+        else
+        {
+            it++;
         }
     }
 }
