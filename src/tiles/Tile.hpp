@@ -17,7 +17,8 @@ class Tile
 
     void render(Shader& shader);
 
-    void setTile(TileType type) { m_Type = type; }
+    void setType(TileType type) { m_Type = type; }
+    void setSize(glm::ivec2 size) { m_Size = size; }
     void setPosition(glm::vec3 position) { m_Position = position; }
     void setDepth(float depth) { m_Position.z = depth; }
     void setWorldPosition(glm::vec3 position);
@@ -26,7 +27,7 @@ class Tile
     void loadSaveState(Json::Value tile);
 
     glm::vec3 getPosition() const { return m_Position; }
-    glm::ivec2 getSize() const { return m_BlockSize; }
+    glm::ivec2 getSize() const { return m_Size; }
     TileType getType() const { return m_Type; }
 
     bool containsPositionIncludeDepth(glm::vec3 position) const;
@@ -39,7 +40,7 @@ class Tile
 
   protected:
     glm::vec3 m_Position;
-    glm::ivec2 m_BlockSize;
+    glm::ivec2 m_Size;
 
     TileType m_Type;
 

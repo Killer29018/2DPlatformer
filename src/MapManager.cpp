@@ -171,7 +171,7 @@ void MapManager::receiveEvent(const Event* event)
                     if (result != TileTypeToVec.end())
                     {
                         type = result->first;
-                        m_GhostTile.setTile(type);
+                        m_GhostTile.setType(type);
                     }
                 }
 

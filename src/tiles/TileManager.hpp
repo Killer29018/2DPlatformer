@@ -43,6 +43,9 @@ class TileManager : public EventObserver
   private:
     static void generateShader();
 
+    void optimizeTiles();
+
+    Tile mergeTiles(Tile t1, Tile t2, bool mergeRight);
     std::vector<Tile> expandTile(Tile tile);
 
   private:

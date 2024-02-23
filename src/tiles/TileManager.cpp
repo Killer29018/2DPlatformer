@@ -9,6 +9,8 @@
 
 #include <format>
 #include <iostream>
+#include <set>
+#include <unordered_set>
 #include <vector>
 
 Shader TileManager::s_Shader;
@@ -167,6 +169,11 @@ void TileManager::receiveEvent(const Event* event)
                     m_ShowTileBlock = !m_ShowTileBlock;
                 }
 
+                if (ImGui::Button("Optimize Tiles"))
+                {
+                    optimizeTiles();
+                }
+
                 ImGui::End();
             }
             break;
@@ -213,6 +220,8 @@ void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
     auto it = m_Tiles.begin();
     while (it != end)
     {
+        assert(size == glm::ivec2(1, 1));
+
         Tile t = it->second;
         // Is there already a block at that position
         bool matchingDepth = t.containsPositionIncludeDepth(position);
@@ -268,7 +277,7 @@ void TileManager::removeTile(glm::vec3 position)
         if (t.containsPositionExcludeDepth(position))
         {
             Tile removedTile = t;
-            m_Tiles.erase(it);
+            it = m_Tiles.erase(it);
 
             std::vector<Tile> newTiles = expandTile(removedTile);
 
@@ -308,6 +317,132 @@ void TileManager::generateShader()
 
     s_ShaderInitialized = true;
     s_Shader.compileFromPath("res/shaders/tile.vert.glsl", "res/shaders/tile.frag.glsl");
+}
+
+void TileManager::optimizeTiles()
+{
+    // Split all Tiles
+
+    std::unordered_map<glm::vec3, Tile> newTiles;
+
+    for (auto it = m_Tiles.begin(); it != m_Tiles.end(); it++)
+    {
+        std::vector<Tile> tiles = TileManager::expandTile(it->second);
+        for (Tile t : tiles)
+        {
+            newTiles.insert({ t.getPosition(), t });
+        }
+    }
+
+    // Horizontal
+
+    /* For every tile check to the right, if the tile is the same
+     * height and same type, merge the two tiles
+     */
+
+    bool merged = false;
+    do
+    {
+        bool forceRun = false;
+
+        std::unordered_map<glm::vec3, Tile> horizontalTiles;
+
+        // List of positions to be removed
+        std::unordered_set<glm::vec3> positions;
+
+        // Remove all tiles that are modified from newTiles
+        // Add to horizontalTiles
+        for (auto t : newTiles)
+        {
+            Tile tile = t.second;
+            glm::vec3 tPosition = tile.getPosition();
+            glm::ivec2 tSize = tile.getSize();
+
+            // Element "removed" from list
+            if (positions.contains(tile.getPosition())) continue;
+
+            glm::vec3 rightPosition = { tPosition.x + tSize.x, tPosition.y, tPosition.z };
+
+            auto pos = newTiles.find(rightPosition);
+
+            if (pos == newTiles.end())
+            {
+                continue;
+            }
+            Tile rightTile = newTiles.at(rightPosition);
+
+            if (positions.contains(rightTile.getPosition()))
+            {
+                forceRun = true;
+                continue;
+            }
+
+            if (rightTile.getSize().y != tSize.y || rightTile.getType() != tile.getType())
+            {
+                continue;
+            }
+
+            Tile newTile = mergeTiles(tile, rightTile, true);
+
+            positions.insert(tile.getPosition());
+            positions.insert(rightTile.getPosition());
+
+            // positions.insert(tile.getPosition());
+            horizontalTiles.insert({ newTile.getPosition(), newTile });
+        }
+
+        // Remove "removed" tiles from newTiles
+        for (glm::vec3 p : positions)
+        {
+            newTiles.erase(p);
+        }
+
+        // Add tiles back to newTiles
+        for (auto t : horizontalTiles)
+        {
+            newTiles.insert(t);
+        }
+
+        merged = (positions.size() != 0);
+        if (forceRun) merged = true;
+    } while (merged);
+
+    // Vertical
+
+    m_Tiles = newTiles;
+}
+
+Tile TileManager::mergeTiles(Tile t1, Tile t2, bool mergeRight)
+{
+    glm::ivec2 t1Size = t1.getSize();
+    glm::ivec2 t2Size = t2.getSize();
+    assert(t1Size.x == t2Size.x || t1Size.y == t2Size.y);
+    assert(t1.getPosition().z == t2.getPosition().z);
+    assert(t1.getType() == t2.getType());
+
+    if (mergeRight && t1Size.y == t2Size.y) // Merge Right
+    {
+        const Tile& leftMost = (t1.getPosition().x < t2.getPosition().x) ? t1 : t2;
+
+        Tile newTile;
+        newTile.setSize(glm::ivec2{ t1Size.x + t2Size.x, t1Size.y });
+        newTile.setPosition(leftMost.getPosition());
+        newTile.setType(leftMost.getType());
+
+        return newTile;
+    }
+    else // Merge down
+    {
+        const Tile& topMost = (t1.getPosition().y > t2.getPosition().y) ? t1 : t2;
+
+        Tile newTile;
+        newTile.setSize(glm::ivec2{ t1Size.x, t1Size.y + t2Size.y });
+
+        newTile.setPosition(topMost.getPosition());
+        newTile.setType(topMost.getType());
+
+        return newTile;
+    }
 }
 
 std::vector<Tile> TileManager::expandTile(Tile tile)
