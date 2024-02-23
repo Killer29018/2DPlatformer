@@ -47,33 +47,35 @@ void TileManager::generateMap()
 
     std::vector<Tile> tempTiles = {
 
-        {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
-        { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
-        { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
-
-        { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { -4.0f, -3.0f, 0.0f },  { 9, 3 }, TileType::STONE_CENTER          },
-        { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-
-        { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
-
-        { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
-        { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
-        { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
-
-        { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
-        { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
-        { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
-
-        { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
-        { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-
-        { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-        { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-        { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+  // {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
+  // { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
+  // { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
+  //
+  // { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        {{ -1.0f, 0.0f, 0.0f }, { 2, 1 }, TileType::STONE_CENTER},
+        { { 3.0f, 1.0f, 0.0f }, { 1, 1 }, TileType::STONE_CENTER},
+        { { 3.0f, 2.0f, 0.0f }, { 1, 1 }, TileType::STONE_CENTER},
+ // { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+  //
+  // { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+  // { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+  // { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+  //
+  // { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
+  // { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
+  // { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
+  //
+  // { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
+  // { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
+  // { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
+  //
+  // { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+  // { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+  // { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+  //
+  // { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+  // { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+  // { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
     };
     for (const Tile& t : tempTiles)
     {
@@ -335,24 +337,29 @@ void TileManager::optimizeTiles()
     }
 
     // Horizontal
+    newTiles = mergeTilesDirection(newTiles, true);
 
-    /* For every tile check to the right, if the tile is the same
-     * height and same type, merge the two tiles
-     */
+    // Vertical
+    m_Tiles = mergeTilesDirection(newTiles, false);
+}
+std::unordered_map<glm::vec3, Tile>
+TileManager::mergeTilesDirection(std::unordered_map<glm::vec3, Tile> tiles, bool mergeRight)
+{
+    std::unordered_map<glm::vec3, Tile> returnTiles = tiles;
 
     bool merged = false;
     do
     {
         bool forceRun = false;
 
-        std::unordered_map<glm::vec3, Tile> horizontalTiles;
+        std::unordered_map<glm::vec3, Tile> modifiedTiles;
 
         // List of positions to be removed
         std::unordered_set<glm::vec3> positions;
 
         // Remove all tiles that are modified from newTiles
         // Add to horizontalTiles
-        for (auto t : newTiles)
+        for (auto t : returnTiles)
         {
             Tile tile = t.second;
             glm::vec3 tPosition = tile.getPosition();
@@ -361,55 +368,57 @@ void TileManager::optimizeTiles()
             // Element "removed" from list
             if (positions.contains(tile.getPosition())) continue;
 
-            glm::vec3 rightPosition = { tPosition.x + tSize.x, tPosition.y, tPosition.z };
+            glm::vec3 nextPosition = tPosition;
+            if (mergeRight)
+                nextPosition.x += tSize.x;
+            else
+                nextPosition.y += tSize.y;
 
-            auto pos = newTiles.find(rightPosition);
+            auto pos = returnTiles.find(nextPosition);
 
-            if (pos == newTiles.end())
+            if (pos == returnTiles.end())
             {
                 continue;
             }
-            Tile rightTile = newTiles.at(rightPosition);
+            Tile nextTile = returnTiles.at(nextPosition);
 
-            if (positions.contains(rightTile.getPosition()))
+            if (positions.contains(nextTile.getPosition()))
             {
                 forceRun = true;
                 continue;
             }
 
-            if (rightTile.getSize().y != tSize.y || rightTile.getType() != tile.getType())
-            {
-                continue;
-            }
+            if (nextTile.getType() != tile.getType()) continue;
 
-            Tile newTile = mergeTiles(tile, rightTile, true);
+            if (mergeRight && nextTile.getSize().y != tSize.y) continue;
+            if (!mergeRight && nextTile.getSize().x != tSize.x) continue;
+
+            Tile newTile = mergeTiles(tile, nextTile, mergeRight);
 
             positions.insert(tile.getPosition());
-            positions.insert(rightTile.getPosition());
+            positions.insert(nextTile.getPosition());
 
             // positions.insert(tile.getPosition());
-            horizontalTiles.insert({ newTile.getPosition(), newTile });
+            modifiedTiles.insert({ newTile.getPosition(), newTile });
         }
 
         // Remove "removed" tiles from newTiles
         for (glm::vec3 p : positions)
         {
-            newTiles.erase(p);
+            returnTiles.erase(p);
         }
 
         // Add tiles back to newTiles
-        for (auto t : horizontalTiles)
+        for (auto t : modifiedTiles)
         {
-            newTiles.insert(t);
+            returnTiles.insert(t);
         }
 
         merged = (positions.size() != 0);
         if (forceRun) merged = true;
     } while (merged);
 
-    // Vertical
-
-    m_Tiles = newTiles;
+    return returnTiles;
 }
 
 Tile TileManager::mergeTiles(Tile t1, Tile t2, bool mergeRight)
@@ -433,13 +442,13 @@ Tile TileManager::mergeTiles(Tile t1, Tile t2, bool mergeRight)
     }
     else // Merge down
     {
-        const Tile& topMost = (t1.getPosition().y > t2.getPosition().y) ? t1 : t2;
+        const Tile& bottomMost = (t1.getPosition().y < t2.getPosition().y) ? t1 : t2;
 
         Tile newTile;
         newTile.setSize(glm::ivec2{ t1Size.x, t1Size.y + t2Size.y });
 
-        newTile.setPosition(topMost.getPosition());
-        newTile.setType(topMost.getType());
+        newTile.setPosition(bottomMost.getPosition());
+        newTile.setType(bottomMost.getType());
 
         return newTile;
     }

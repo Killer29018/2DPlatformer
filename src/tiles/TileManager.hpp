@@ -45,7 +45,11 @@ class TileManager : public EventObserver
 
     void optimizeTiles();
 
+    std::unordered_map<glm::vec3, Tile>
+    mergeTilesDirection(std::unordered_map<glm::vec3, Tile> tiles, bool mergeRight);
+
     Tile mergeTiles(Tile t1, Tile t2, bool mergeRight);
+
     std::vector<Tile> expandTile(Tile tile);
 
   private:

@@ -14,7 +14,7 @@ Player::Player() : m_Camera(nullptr) {}
 
 Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(tiles)
 {
-    m_Position = glm::vec3(1.0, 1.6, 0);
+    m_Position = glm::vec3(0.0, 0.1, 0);
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
 
@@ -103,7 +103,7 @@ void Player::receiveEvent(const Event* event)
                         break;
 
                     case GLFW_KEY_R:
-                        m_Position = glm::vec3(1.0f, 1.5f, m_Position.z);
+                        m_Position = glm::vec3(0.0f, 0.1f, m_Position.z);
                         m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
                         m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);
                         break;
@@ -171,7 +171,7 @@ void Player::receiveEvent(const Event* event)
 
                 if (ImGui::Button("Reset"))
                 {
-                    m_Position = glm::vec3(1.0f, 1.5f, m_Position.z);
+                    m_Position = glm::vec3(0.0f, 0.1f, m_Position.z);
 
                     m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
                     m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);
