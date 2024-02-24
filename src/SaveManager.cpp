@@ -11,7 +11,7 @@
 
 #include "imgui.h"
 
-SaveManager::SaveManager() {}
+SaveManager::SaveManager() { reloadStates(); }
 
 void SaveManager::receiveEvent(const Event* event)
 {
@@ -24,84 +24,118 @@ void SaveManager::receiveEvent(const Event* event)
             if (ImGui::Begin("Save Manager"))
             {
                 static int selectedIndex = -1;
-                if (ImGui::Button("Refresh Saves"))
-
-                {
-                    // Reload saved list of saves
-                    reloadStates();
-                    selectedIndex = -1;
-                }
+                constexpr size_t saveNameSize = 100;
+                static char saveName[saveNameSize] = "";
 
                 // Display saves and allow to be loaded
                 if (ImGui::BeginTable("##SaveLoad", 2))
                 {
-                    ImGui::TableNextColumn();
-                    if (ImGui::Button("Load State") && selectedIndex <= (int)m_States.size() - 1)
                     {
 
-                        std::filesystem::path savedPath = m_States.at(selectedIndex);
-                        loadStateFromPath(savedPath);
-                        reloadStates();
-
-                        // Path may have moved after reload so refind index
-                        auto it =
-                            std::find_if(m_States.begin(), m_States.end(),
-                                         [&](std::filesystem::path v) { return v == savedPath; });
-
-                        selectedIndex = it - m_States.begin();
-                        if (it == m_States.end()) selectedIndex = -1;
-                    }
-
-                    ImGui::NewLine();
-                    ImGui::Text("Save Name: ");
-
-                    constexpr size_t saveNameSize = 100;
-                    static char saveName[saveNameSize] = "temporary";
-                    ImGui::InputText("##SaveName", saveName, saveNameSize);
-
-                    if (ImGui::Button("Save State"))
-                    {
-                        saveState(saveName);
-                        reloadStates();
-
-                        auto it = std::find_if(
-                            m_States.begin(), m_States.end(), [&](std::filesystem::path v) {
-                                return v.filename().stem().generic_string() == saveName;
-                            });
-
-                        selectedIndex = it - m_States.begin();
-                        if (it == m_States.end()) selectedIndex = -1;
-                    }
-
-                    if (ImGui::Button("Delete State"))
-                    {
-                        std::filesystem::remove(m_States.at(selectedIndex));
-                        reloadStates();
-                        selectedIndex = 0;
-                    }
-
-                    // ImGui::TableNextRow();
-                    ImGui::TableNextColumn();
-                    if (ImGui::BeginListBox("##Saves",
-                                            ImVec2(-1, 10 * ImGui::GetTextLineHeightWithSpacing())))
-                    {
-                        for (int i = 0; i < (int)m_States.size(); i++)
+                        ImGui::TableNextColumn();
+                        if (ImGui::Button("Load State") &&
+                            selectedIndex <= (int)m_States.size() - 1)
                         {
-                            const std::string filename = m_States[i].filename().generic_string();
-                            const bool isSelected = (selectedIndex == i);
-                            if (ImGui::Selectable(filename.c_str(), isSelected)) selectedIndex = i;
 
-                            if (isSelected) ImGui::SetItemDefaultFocus();
+                            std::filesystem::path savedPath = m_States.at(selectedIndex);
+                            loadStateFromPath(savedPath);
+                            reloadStates();
+
+                            // Path may have moved after reload so refind index
+                            auto it = std::find_if(
+                                m_States.begin(), m_States.end(),
+                                [&](std::filesystem::path v) { return v == savedPath; });
+
+                            selectedIndex = it - m_States.begin();
+                            if (it == m_States.end()) selectedIndex = -1;
                         }
 
-                        ImGui::EndListBox();
+                        ImGui::Text("Save Name: ");
+
+                        ImGui::InputText("##SaveName", saveName, saveNameSize);
+
+                        if (ImGui::Button("Save State"))
+                        {
+                            saveState(saveName);
+                            reloadStates();
+
+                            auto it = std::find_if(
+                                m_States.begin(), m_States.end(), [&](std::filesystem::path v) {
+                                    return v.filename().stem().generic_string() == saveName;
+                                });
+
+                            selectedIndex = it - m_States.begin();
+                            if (it == m_States.end()) selectedIndex = -1;
+                        }
+
+                        if (ImGui::Button("Delete State"))
+                        {
+                            std::filesystem::remove(m_States.at(selectedIndex));
+                            reloadStates();
+                            memcpy(saveName, "", 1);
+                            selectedIndex = 0;
+                        }
+
+                        if (ImGui::Button("Copy State"))
+                        {
+                            // TODO: When copying, add numbers at end of path to mark duplicate of
+                            // copy
+                            const char* suffix = "_copy";
+                            std::filesystem::path target = m_States.at(selectedIndex);
+                            target.replace_filename(target.stem().generic_string() + suffix);
+                            target.replace_extension(m_StateSuffix);
+                            std::filesystem::copy_file(m_States.at(selectedIndex), target);
+
+                            reloadStates();
+
+                            memcpy(saveName, target.stem().generic_string().c_str(),
+                                   target.stem().generic_string().length());
+
+                            auto it = std::find_if(
+                                m_States.begin(), m_States.end(), [&](std::filesystem::path v) {
+                                    return v.filename().stem().generic_string() == saveName;
+                                });
+
+                            selectedIndex = it - m_States.begin();
+                            if (it == m_States.end()) selectedIndex = -1;
+                        }
+
+                        if (ImGui::Button("Refresh Saves"))
+
+                        {
+                            // Reload saved list of saves
+                            reloadStates();
+                            selectedIndex = -1;
+                        }
+                    }
+
+                    {
+                        ImGui::TableNextColumn();
+                        if (ImGui::BeginListBox(
+                                "##Saves", ImVec2(-1, 10 * ImGui::GetTextLineHeightWithSpacing())))
+                        {
+                            for (int i = 0; i < (int)m_States.size(); i++)
+                            {
+                                const std::string filename = m_States[i].stem().generic_string();
+                                const bool isSelected = (selectedIndex == i);
+                                if (ImGui::Selectable(filename.c_str(), isSelected))
+                                {
+                                    selectedIndex = i;
+                                    std::memcpy(saveName, filename.c_str(), filename.size() + 1);
+                                    // saveName = filename.c_str();
+                                }
+
+                                if (isSelected) ImGui::SetItemDefaultFocus();
+                            }
+
+                            ImGui::EndListBox();
+                        }
                     }
 
                     ImGui::EndTable();
                 }
-
-                ImGui::End();
             }
+            ImGui::End();
 
             break;
         }

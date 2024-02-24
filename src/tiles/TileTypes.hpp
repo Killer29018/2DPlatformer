@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <map>
 
+#include <algorithm>
+#include <optional>
+
 enum class TileType : int32_t {
     NONE = 0,
     STONE_TOP_LEFT,
@@ -49,3 +52,15 @@ const std::map<TileType, glm::ivec2> TileTypeToVec = {
     { TileType::ABOVE_GRASS_TOP_CENTER, { 4, 0 }  },
     { TileType::ABOVE_GRASS_TOP_RIGHT,  { 5, 0 }  },
 };
+
+inline std::optional<TileType> VecToTileType(glm::ivec2 coord)
+{
+    auto result = std::find_if(
+        TileTypeToVec.begin(), TileTypeToVec.end(),
+        [&](const std::pair<TileType, glm::ivec2>& pair) { return pair.second == coord; });
+
+    std::optional<TileType> returnValue;
+    if (result != TileTypeToVec.end()) returnValue = result->first;
+
+    return returnValue;
+}

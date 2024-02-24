@@ -1,5 +1,6 @@
 #include "MapManager.hpp"
 
+#include "ImGuiUtility.hpp"
 #include "events/Events.hpp"
 #include "imgui.h"
 #include "tiles/TileTypes.hpp"
@@ -15,7 +16,7 @@ MapManager::MapManager(Player* player, TileManager* tileManager, Window* window)
     m_GhostShader.compileFromPath("res/shaders/ghostTile.vert.glsl",
                                   "res/shaders/ghostTile.frag.glsl");
 
-    m_GhostTile = GhostTile(glm::vec3{ 0.0f }, glm::ivec2{ 1 }, TileType::STONE_CENTER);
+    m_GhostTile = GhostTile(glm::vec3{ 0.0f }, glm::ivec2{ 1 }, TileType::NONE);
 }
 
 void MapManager::receiveEvent(const Event* event)
@@ -110,7 +111,7 @@ void MapManager::receiveEvent(const Event* event)
         {
             if (ImGui::Begin("MapManager"))
             {
-                ImGui::Text("Mouse Tile Pos: (%f, %f)", mousePos.x, mousePos.y);
+                static int selected = -1;
 
                 const TextureMap& map = m_TileManager->getTextureMap();
                 uint32_t id = map.getEntireTexture().getID();
@@ -118,11 +119,22 @@ void MapManager::receiveEvent(const Event* event)
                 glm::ivec2 tileSize = map.getTileSize();
                 glm::ivec2 tiles = map.getTileDimensions();
 
-                ImGui::Text("Texture ID: %d", id);
+                {
+                    ImGuiUtility::TextCentered("Depth");
+                    ImGui::PushItemWidth(-1);
 
-                int depth = (int)m_GhostTile.getPosition().z;
-                ImGui::SliderInt("Depth", &depth, -10, 10);
-                m_GhostTile.setDepth((float)depth);
+                    int depth = (int)m_GhostTile.getPosition().z;
+                    ImGui::SliderInt("##Depth", &depth, -10, 10, "%d");
+                    m_GhostTile.setDepth((float)depth);
+
+                    ImGui::PopItemWidth();
+                }
+
+                if (ImGui::Button("Clear pick", ImVec2(-1, ImGui::GetTextLineHeightWithSpacing())))
+                {
+                    selected = -1;
+                    m_GhostTile.setType(TileType::NONE);
+                }
 
                 ImVec2 initialPos = ImGui::GetCursorPos();
                 ImGui::Image((void*)(intptr_t)id, ImVec2(size.x, size.y));
@@ -134,14 +146,18 @@ void MapManager::receiveEvent(const Event* event)
 
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
 
+                int newSelected = -1;
                 for (int y = 0; y < tiles.y; y++)
                 {
                     for (int x = 0; x < tiles.x; x++)
                     {
-                        ImGui::PushID(y * size.x + x);
+                        int id = y * size.x + x;
+                        ImGui::PushID(id);
 
-                        if (ImGui::Button("##TilemapSelection", ImVec2(tileSize.x, tileSize.y)))
+                        if (ImGui::Selectable("", selected == id, ImGuiSelectableFlags_None,
+                                              ImVec2(tileSize.x, tileSize.y)))
                         {
+                            newSelected = id;
                             xCoord = x;
                             yCoord = y;
                             pressed = true;
@@ -162,21 +178,16 @@ void MapManager::receiveEvent(const Event* event)
                 {
                     // Find TileType for coordinate
                     glm::ivec2 tileCoord{ xCoord, yCoord };
-                    auto result = std::find_if(TileTypeToVec.begin(), TileTypeToVec.end(),
-                                               [&](const std::pair<TileType, glm::ivec2>& pair) {
-                                                   return pair.second == tileCoord;
-                                               });
-                    TileType type = TileType::NONE;
+                    std::optional<TileType> result = VecToTileType(tileCoord);
 
-                    if (result != TileTypeToVec.end())
+                    if (result)
                     {
-                        type = result->first;
-                        m_GhostTile.setType(type);
+                        m_GhostTile.setType(result.value());
+                        selected = newSelected;
                     }
                 }
-
-                ImGui::End();
             }
+            ImGui::End();
             break;
         }
     default:

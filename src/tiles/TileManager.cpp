@@ -173,15 +173,16 @@ void TileManager::receiveEvent(const Event* event)
                 {
                     optimizeTiles();
                 }
-
-                ImGui::End();
             }
+            ImGui::End();
             break;
         }
     case EventType::SaveGame:
         {
             const SaveGameEvent* sgEvent = reinterpret_cast<const SaveGameEvent*>(event);
             Json::Value tileRoot;
+
+            optimizeTiles();
 
             uint32_t index = 0;
             for (auto& t : m_Tiles)
@@ -236,7 +237,7 @@ void TileManager::setTile(glm::vec3 position, glm::ivec2 size, TileType type)
             // Remove the old tile from the list
 
             std::vector<Tile> newTiles = expandTile(t);
-            m_Tiles.erase(it);
+            it = m_Tiles.erase(it);
 
             for (const Tile& t : newTiles)
             {

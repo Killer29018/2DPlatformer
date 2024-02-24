@@ -176,9 +176,8 @@ void Player::receiveEvent(const Event* event)
                     m_Vel = glm::vec3(0.0f, 0.0f, 0.0f);
                     m_Acc = glm::vec3(0.0f, 0.0f, 0.0f);
                 }
-
-                ImGui::End();
             }
+            ImGui::End();
             break;
         }
     case EventType::SaveGame:

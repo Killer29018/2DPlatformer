@@ -34,15 +34,9 @@ void Application::receiveEvent(const Event* event)
             {
                 ImGui::Text("Frametime (ms): %.3f", m_PreviousDT);
                 ImGui::Text("FPS: %d", (int)(1.0f / m_PreviousDT));
-
-                ImGui::End();
             }
+            ImGui::End();
 
-            break;
-        }
-    case EventType::WindowClose:
-        {
-            m_SaveManager.saveState("default.json");
             break;
         }
     default:
