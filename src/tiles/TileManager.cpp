@@ -47,35 +47,33 @@ void TileManager::generateMap()
 
     std::vector<Tile> tempTiles = {
 
-  // {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
-  // { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
-  // { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
-  //
-  // { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-        {{ -1.0f, 0.0f, 0.0f }, { 2, 1 }, TileType::STONE_CENTER},
-        { { 3.0f, 1.0f, 0.0f }, { 1, 1 }, TileType::STONE_CENTER},
-        { { 3.0f, 2.0f, 0.0f }, { 1, 1 }, TileType::STONE_CENTER},
- // { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-  //
-  // { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-  // { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-  // { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
-  //
-  // { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
-  // { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
-  // { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
-  //
-  // { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
-  // { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
-  // { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
-  //
-  // { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
-  // { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
-  // { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
-  //
-  // { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
-  // { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
-  // { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+        {{ -5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_LEFT        },
+        { { -4.0f, 0.0f, 0.0f },   { 9, 1 }, TileType::STONE_TOP_CENTER      },
+        { { 5.0f, 0.0f, 0.0f },    { 1, 1 }, TileType::STONE_TOP_RIGHT       },
+
+        { { -5.0f, -3.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { -1.0f, 0.0f, 0.0f },   { 2, 1 }, TileType::STONE_CENTER          },
+        { { 5.0f, -3.0f, 0.0f },   { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+
+        { { -5.0f, -4.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { -4.0f, -4.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 5.0f, -4.0f, 0.0f },   { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
+
+        { { 10.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_LEFT  },
+        { { 11.0f, 3.0f, 1.0f },   { 9, 1 }, TileType::ABOVE_GRASS_TOP_CENTER},
+        { { 20.0f, 3.0f, 1.0f },   { 1, 1 }, TileType::ABOVE_GRASS_TOP_RIGHT },
+
+        { { 10.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_LEFT  },
+        { { 11.0f, 2.0f, 0.0f },   { 9, 1 }, TileType::STONE_GRASS_TOP_CENTER},
+        { { 20.0f, 2.0f, 0.0f },   { 1, 1 }, TileType::STONE_GRASS_TOP_RIGHT },
+
+        { { 10.0f, -1.0f, 1.0f },  { 1, 3 }, TileType::STONE_CENTER_LEFT     },
+        { { 11.0f, -1.0f, -1.0f }, { 9, 3 }, TileType::STONE_CENTER          },
+        { { 20.0f, -1.0f, 0.0f },  { 1, 3 }, TileType::STONE_CENTER_RIGHT    },
+
+        { { 10.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_LEFT     },
+        { { 11.0f, -2.0f, 0.0f },  { 9, 1 }, TileType::STONE_BOTTOM_CENTER   },
+        { { 20.0f, -2.0f, 0.0f },  { 1, 1 }, TileType::STONE_BOTTOM_RIGHT    },
     };
     for (const Tile& t : tempTiles)
     {

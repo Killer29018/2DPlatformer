@@ -175,7 +175,7 @@ void Window::keyboardEvent(GLFWwindow* window, int key, int scancode, int action
     event.action = action;
     event.mods = mods;
 
-    w->notify(&event);
+    if (!ImGui::GetIO().WantCaptureKeyboard) w->notify(&event);
 }
 
 void Window::mouseMoveEvent(GLFWwindow* window, double xPos, double yPos)

@@ -42,7 +42,7 @@ void Application::receiveEvent(const Event* event)
         }
     case EventType::WindowClose:
         {
-            m_SaveManager.saveGame();
+            m_SaveManager.saveState("default.json");
             break;
         }
     default:
@@ -77,9 +77,11 @@ void Application::initialize()
     m_ImGuiManager.attach(&m_TileManager);
     m_ImGuiManager.attach(&m_Player);
     m_ImGuiManager.attach(&m_MapManager);
+    m_ImGuiManager.attach(&m_ImGuiManager);
+    m_ImGuiManager.attach(&m_SaveManager);
 
-    m_SaveManager.attach(&m_Player);
     m_SaveManager.attach(&m_TileManager);
+    m_SaveManager.attach(&m_Player);
 
     m_TileManager.generateMap();
 
@@ -87,7 +89,7 @@ void Application::initialize()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_SaveManager.loadGame();
+    m_SaveManager.loadState("default");
 }
 
 void Application::mainLoop()
