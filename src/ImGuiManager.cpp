@@ -28,7 +28,7 @@ void ImGuiManager::receiveEvent(const Event* event)
         {
             const RenderEvent* rEvent = reinterpret_cast<const RenderEvent*>(event);
 
-            static bool render = false;
+            static bool render = true;
             // showDockspace(&render);
 
 #ifdef DEMO_WINDOW
@@ -72,7 +72,7 @@ void ImGuiManager::initImGui()
     m_IO = &ImGui::GetIO();
     // m_IO->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     // m_IO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    // m_IO->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    m_IO->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     m_IO->Fonts->AddFontFromFileTTF("res/fonts/Hack-Regular.ttf", 24.0f);
 

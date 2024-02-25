@@ -198,7 +198,9 @@ void MapManager::placeBlock()
 {
     glm::vec3 ghostPosition = m_GhostTile.getPosition();
     glm::vec3 position = glm::vec3{ ghostPosition.x, ghostPosition.y, ghostPosition.z };
-    m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
+
+    if (m_GhostTile.getType() != TileType::NONE)
+        m_TileManager->setTile(position, m_GhostTile.getSize(), m_GhostTile.getType());
 }
 
 void MapManager::removeBlock()

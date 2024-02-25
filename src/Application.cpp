@@ -30,6 +30,11 @@ void Application::receiveEvent(const Event* event)
     {
     case EventType::ImGuiRender:
         {
+            if (ImGui::Begin("Data"))
+            {
+            }
+            ImGui::End();
+
             if (ImGui::Begin("Info"))
             {
                 ImGui::Text("Frametime (ms): %.3f", m_PreviousDT);
