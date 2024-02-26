@@ -5,6 +5,7 @@
 #include "MapManager.hpp"
 #include "Player.hpp"
 #include "SaveManager.hpp"
+#include "TimerManager.hpp"
 #include "Window.hpp"
 #include "events/EventHandler.hpp"
 #include "resources/Shader.hpp"

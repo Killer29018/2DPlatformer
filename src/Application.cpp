@@ -37,10 +37,11 @@ void Application::receiveEvent(const Event* event)
 
             if (ImGui::Begin("Info"))
             {
-                ImGui::Text("Frametime (ms): %.3f", m_PreviousDT);
                 ImGui::Text("FPS: %d", (int)(1.0f / m_PreviousDT));
             }
             ImGui::End();
+
+            TimerManager::renderImGui();
 
             break;
         }
@@ -98,6 +99,7 @@ void Application::mainLoop()
 
     while (m_Window.isActive())
     {
+        TimerManager::startTimer("Frame Time");
         currentTime = glfwGetTime();
         float dt = currentTime - previousTime;
         previousTime = currentTime;
@@ -105,7 +107,9 @@ void Application::mainLoop()
 
         UpdateEvent event;
         event.dt = dt;
+        TimerManager::startTimer("Update");
         notify(&event);
+        TimerManager::endTimer("Update");
 
         m_Window.getEvents();
 
@@ -116,10 +120,13 @@ void Application::mainLoop()
 
         RenderEvent render;
         render.camera = &m_Camera;
+        TimerManager::startTimer("Render");
         notify(&render);
+        TimerManager::endTimer("Render");
 
         m_ImGuiManager.postRender();
 
         m_Window.swapBuffers();
+        TimerManager::endTimer("Frame Time");
     }
 }

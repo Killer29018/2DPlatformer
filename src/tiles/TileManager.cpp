@@ -4,6 +4,7 @@
 
 #include "../AABB.hpp"
 #include "../Camera.hpp"
+#include "../TimerManager.hpp"
 #include "../events/Events.hpp"
 #include "../tiles/Tile.hpp"
 
@@ -322,6 +323,7 @@ void TileManager::generateShader()
 
 void TileManager::optimizeTiles()
 {
+    TimerManager::startTimer("Optimize Tiles");
     // Split all Tiles
 
     std::unordered_map<glm::vec3, Tile> newTiles;
@@ -340,6 +342,8 @@ void TileManager::optimizeTiles()
 
     // Vertical
     m_Tiles = mergeTilesDirection(newTiles, false);
+
+    TimerManager::endTimer("Optimize Tiles");
 }
 std::unordered_map<glm::vec3, Tile>
 TileManager::mergeTilesDirection(std::unordered_map<glm::vec3, Tile> tiles, bool mergeRight)
