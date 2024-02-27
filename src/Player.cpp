@@ -79,7 +79,7 @@ void Player::receiveEvent(const Event* event)
         {
             UpdateEvent* updateEvent = (UpdateEvent*)event;
 
-            m_Acc *= 0.3;
+            m_Acc *= 0.3 * updateEvent->dt;
 
             for (auto it = m_PressedKeys.begin(); it != m_PressedKeys.end(); it++)
             {
@@ -115,7 +115,7 @@ void Player::receiveEvent(const Event* event)
             glm::vec3 previousPosition = m_Position;
 
             m_Vel += m_Acc * updateEvent->dt;
-            m_Vel *= m_Damping;
+            m_Vel -= m_Vel * m_Damping * updateEvent->dt;
 
             glm::vec4 positionVelocity =
                 m_Tiles->checkCollision(m_Position, m_Size, m_Vel * updateEvent->dt);

@@ -154,7 +154,7 @@ void Window::initGLFW(const char* title)
 
     glViewport(0, 0, getSize().x, getSize().y);
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     glfwSetWindowUserPointer(getWindow(), (void*)this);
 

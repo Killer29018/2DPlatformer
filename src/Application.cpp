@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <format>
 #include <memory>
+#include <numeric>
 
 Application::Application(glm::ivec2 windowSize, const char* title)
     : m_Window(Window(windowSize, title))
@@ -37,7 +38,15 @@ void Application::receiveEvent(const Event* event)
 
             if (ImGui::Begin("Info"))
             {
-                ImGui::Text("FPS: %d", (int)(1.0f / m_PreviousDT));
+                const uint32_t capacity = 40;
+                static std::vector<double> previousTimes(capacity);
+                static size_t index = 0;
+
+                size_t value = std::accumulate(previousTimes.begin(), previousTimes.end(), 0);
+                value /= previousTimes.size();
+                previousTimes[index++ % capacity] = 1.0f / m_PreviousDT;
+
+                ImGui::Text("FPS: %ld", value);
             }
             ImGui::End();
 

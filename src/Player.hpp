@@ -40,7 +40,7 @@ class Player : public EventObserver
 
     glm::vec2 m_Size{ Tile::s_TileSize * 0.9, Tile::s_TileSize * 1.9 };
 
-    float m_Damping = 0.9f;
+    float m_Damping = 6.0f;
 
     bool m_OnGround = true;
     float m_MovementSpeed = 20.0f;
