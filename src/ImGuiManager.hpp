@@ -25,4 +25,6 @@ class ImGuiManager : public EventDispatcher, public EventObserver
     Window* m_Window;
 
     ImGuiIO* m_IO;
+
+    bool m_Visible = true;
 };

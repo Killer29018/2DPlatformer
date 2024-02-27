@@ -24,19 +24,31 @@ void ImGuiManager::receiveEvent(const Event* event)
 {
     switch (event->getType())
     {
+    case EventType::KeyboardPress:
+        {
+            const KeyboardEvent* kEvent = reinterpret_cast<const KeyboardEvent*>(event);
+            if (kEvent->action == GLFW_PRESS && kEvent->key == GLFW_KEY_LEFT_ALT)
+            {
+                m_Visible = !m_Visible;
+            }
+
+            break;
+        }
     case EventType::Render:
         {
             const RenderEvent* rEvent = reinterpret_cast<const RenderEvent*>(event);
 
-            static bool render = true;
             // showDockspace(&render);
+            if (m_Visible)
+            {
 
 #ifdef DEMO_WINDOW
-            ImGui::ShowDemoWindow();
+                ImGui::ShowDemoWindow();
 #endif
 
-            ImGuiRenderEvent imguiEvent;
-            notify(&imguiEvent);
+                ImGuiRenderEvent imguiEvent;
+                notify(&imguiEvent);
+            }
 
             break;
         }

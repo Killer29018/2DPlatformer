@@ -76,6 +76,7 @@ void Application::initialize()
     m_Window.attach(&m_Camera);
     m_Window.attach(&m_Player);
     m_Window.attach(&m_MapManager);
+    m_Window.attach(&m_ImGuiManager);
 
     attach(&m_Player);
     attach(&m_TileManager);

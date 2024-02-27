@@ -53,12 +53,21 @@ set (OutputRes "${outputDirectory}/res")
 
 add_custom_target(Resources ALL COMMENT "Copying Resources")
 
+
 add_custom_command(
     TARGET Resources POST_BUILD
     COMMAND
     cmake -E make_directory
     "${OutputRes}/shaders/" "${OutputRes}/fonts/" "${OutputRes}/textures/" "${outputDirectory}/saves/"
     COMMENT "Create resource folder at ${OutputRes}"
+)
+
+add_custom_command(
+    TARGET Resources POST_BUILD
+    COMMAND
+    cmake -E copy
+    "${PROJECT_SOURCE_DIR}/imgui.ini" "${outputDirectory}"
+    COMMENT "Copied imgui.ini"
 )
 
 add_custom_command(
