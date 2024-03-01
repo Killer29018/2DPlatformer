@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 Shader::Shader() {}
 
@@ -94,9 +95,27 @@ void Shader::setIVec2(const std::string& name, const glm::ivec2& value)
     glUniform2i(getUniformLocation(name), value.x, value.y);
 }
 
+void Shader::setIVec2Array(const std::string& name, const std::vector<glm::ivec2>& value)
+{
+    std::vector<int> newData(value.size() * 2);
+    size_t index = 0;
+    for (const glm::ivec2& v : value)
+    {
+        newData[index++] = v.x;
+        newData[index++] = v.y;
+    }
+
+    glUniform2iv(getUniformLocation(name), value.size(), newData.data());
+}
+
 void Shader::setVec2(const std::string& name, const glm::vec2& value)
 {
     glUniform2f(getUniformLocation(name), value.x, value.y);
+}
+
+void Shader::setVec3(const std::string& name, const glm::vec3& value)
+{
+    glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
 }
 
 void Shader::setMat4(const std::string& name, const glm::mat4& value)

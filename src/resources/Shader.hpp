@@ -37,7 +37,9 @@ class Shader
     void setFloat(const std::string& name, float value);
     void setInt(const std::string& name, int value);
     void setIVec2(const std::string& name, const glm::ivec2& value);
+    void setIVec2Array(const std::string& name, const std::vector<glm::ivec2>& value);
     void setVec2(const std::string& name, const glm::vec2& value);
+    void setVec3(const std::string& name, const glm::vec3& value);
     void setMat4(const std::string& name, const glm::mat4& value);
 
   private:

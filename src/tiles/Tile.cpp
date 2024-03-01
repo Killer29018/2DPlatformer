@@ -27,8 +27,10 @@ void Tile::render(Shader& shader)
         model, glm::vec3(m_Position.x / m_Size.x, m_Position.y / m_Size.y, m_Position.z));
 
     shader.setMat4("u_Model", model);
-    shader.setIVec2("u_TileIndex", TileTypeToVec.at(m_Type));
+    const std::vector<glm::ivec2>& coords = TileTypeToVec.at(m_Type);
 
+    shader.setIVec2Array("u_TileIndex", coords);
+    shader.setInt("u_TileIndexSize", coords.size());
     shader.setIVec2("u_TileSize", m_Size);
 
     shader.setInt("u_BlockID", (int)std::hash<glm::vec3>{}(m_Position));

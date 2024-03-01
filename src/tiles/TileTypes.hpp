@@ -30,34 +30,41 @@ enum class TileType : int32_t {
     LAST
 };
 
-const std::map<TileType, glm::ivec2> TileTypeToVec = {
-    {TileType::NONE,                    { -1, -1 }},
-    { TileType::STONE_TOP_LEFT,         { 0, 0 }  },
-    { TileType::STONE_TOP_CENTER,       { 1, 0 }  },
-    { TileType::STONE_TOP_RIGHT,        { 2, 0 }  },
+constexpr size_t MAX_TILE_VEC = 3;
 
-    { TileType::STONE_CENTER_LEFT,      { 0, 1 }  },
-    { TileType::STONE_CENTER,           { 1, 1 }  },
-    { TileType::STONE_CENTER_RIGHT,     { 2, 1 }  },
+const std::map<TileType, std::vector<glm::ivec2>> TileTypeToVec = {
+    {TileType::NONE,                    { { -1, -1 } }        },
+    { TileType::STONE_TOP_LEFT,         { { 0, 0 } }          },
+    { TileType::STONE_TOP_CENTER,       { { 1, 0 } }          },
+    { TileType::STONE_TOP_RIGHT,        { { 2, 0 } }          },
 
-    { TileType::STONE_BOTTOM_LEFT,      { 0, 2 }  },
-    { TileType::STONE_BOTTOM_CENTER,    { 1, 2 }  },
-    { TileType::STONE_BOTTOM_RIGHT,     { 2, 2 }  },
+    { TileType::STONE_CENTER_LEFT,      { { 0, 1 } }          },
+    { TileType::STONE_CENTER,           { { 1, 1 }, { 1, 3 } }},
+    { TileType::STONE_CENTER_RIGHT,     { { 2, 1 } }          },
 
-    { TileType::STONE_GRASS_TOP_LEFT,   { 3, 1 }  },
-    { TileType::STONE_GRASS_TOP_CENTER, { 4, 1 }  },
-    { TileType::STONE_GRASS_TOP_RIGHT,  { 5, 1 }  },
+    { TileType::STONE_BOTTOM_LEFT,      { { 0, 2 } }          },
+    { TileType::STONE_BOTTOM_CENTER,    { { 1, 2 } }          },
+    { TileType::STONE_BOTTOM_RIGHT,     { { 2, 2 } }          },
 
-    { TileType::ABOVE_GRASS_TOP_LEFT,   { 3, 0 }  },
-    { TileType::ABOVE_GRASS_TOP_CENTER, { 4, 0 }  },
-    { TileType::ABOVE_GRASS_TOP_RIGHT,  { 5, 0 }  },
+    { TileType::STONE_GRASS_TOP_LEFT,   { { 3, 1 } }          },
+    { TileType::STONE_GRASS_TOP_CENTER, { { 4, 1 } }          },
+    { TileType::STONE_GRASS_TOP_RIGHT,  { { 5, 1 } }          },
+
+    { TileType::ABOVE_GRASS_TOP_LEFT,   { { 3, 0 } }          },
+    { TileType::ABOVE_GRASS_TOP_CENTER, { { 4, 0 } }          },
+    { TileType::ABOVE_GRASS_TOP_RIGHT,  { { 5, 0 } }          },
 };
 
 inline std::optional<TileType> VecToTileType(glm::ivec2 coord)
 {
-    auto result = std::find_if(
-        TileTypeToVec.begin(), TileTypeToVec.end(),
-        [&](const std::pair<TileType, glm::ivec2>& pair) { return pair.second == coord; });
+    auto result = std::find_if(TileTypeToVec.begin(), TileTypeToVec.end(),
+                               [&](const std::pair<TileType, std::vector<glm::ivec2>>& pair) {
+                                   auto result = std::find_if(
+                                       pair.second.begin(), pair.second.end(),
+                                       [&](glm::ivec2 value) { return value == coord; });
+
+                                   return (result != pair.second.end());
+                               });
 
     std::optional<TileType> returnValue;
     if (result != TileTypeToVec.end()) returnValue = result->first;
