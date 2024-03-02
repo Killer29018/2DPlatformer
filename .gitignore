@@ -1,7 +1,6 @@
 build/**
 bin/**
 .cache/**
-saves/**
 
 *.kra~
 *.png~

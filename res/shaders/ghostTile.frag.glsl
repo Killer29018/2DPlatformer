@@ -5,27 +5,22 @@ in vec2 v_Texcoords;
 out vec4 f_Colour;
 
 uniform ivec2 u_TilemapSize;
-uniform ivec2 u_TileIndex[3];
-uniform int u_TileIndexSize;
+uniform ivec2 u_TileTextureMapping[3];
+uniform int u_TileMappingSize;
 
 uniform float u_TimeElapsed;
 
-uniform ivec2 u_TileSize;
+uniform ivec2 u_BlockSize;
 
 uniform sampler2DArray u_Texture;
 
 vec4 tileFrag()
 {
-    vec2 texcoord_2d = v_Texcoords;
-    texcoord_2d = mod(texcoord_2d * u_TileSize, 1.);
-
-    ivec2 tilePosInBlock = ivec2(floor(v_Texcoords * u_TileSize));
-    int indexInBlock = tilePosInBlock.y * u_TileSize.x + tilePosInBlock.x;
-
-    ivec2 index = u_TileIndex[0];
+    ivec2 index = u_TileTextureMapping[0];
 
     int tileIndex = index.y * u_TilemapSize.x + index.x;
 
+    vec2 texcoord_2d = mod(v_Texcoords * u_BlockSize, 1.);
     vec3 texcoord = vec3(texcoord_2d.xy, tileIndex);
 
     return texture(u_Texture, texcoord);
