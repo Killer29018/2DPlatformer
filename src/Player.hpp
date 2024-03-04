@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Animation.hpp"
 #include "Camera.hpp"
 #include "events/EventHandler.hpp"
 #include "resources/Texture2D.hpp"
@@ -7,6 +8,12 @@
 #include "tiles/TileManager.hpp"
 
 #include <glm/glm.hpp>
+#include <unordered_map>
+
+enum class PlayerAnimations { PLAYER_IDLE };
+const std::unordered_map<PlayerAnimations, glm::ivec2> PlayerAnimationToVec = {
+    {PlayerAnimations::PLAYER_IDLE, { 1, 0 }}
+};
 
 class Player : public EventObserver
 {
@@ -32,7 +39,7 @@ class Player : public EventObserver
     glm::vec3 m_Gravity = { 0.0, -14, 0.0 };
 
     Shader m_Shader;
-    Texture2D m_Texture;
+    Animation<PlayerAnimations> m_Animation;
 
     uint32_t m_VAO;
     uint32_t m_VBO;

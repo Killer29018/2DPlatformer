@@ -3,8 +3,8 @@
 #include "GLFW/glfw3.h"
 #include "glad/gl.h"
 
+#include "Animation.hpp"
 #include "events/Events.hpp"
-#include "tiles/TileManager.hpp"
 #include <format>
 #include <iostream>
 
@@ -26,7 +26,7 @@ Player::Player(Player&& other)
       m_VertexCount(other.m_VertexCount), m_Camera(other.m_Camera), m_Tiles(other.m_Tiles)
 {
     m_Shader = std::move(other.m_Shader);
-    m_Texture = std::move(other.m_Texture);
+    m_Animation = std::move(other.m_Animation);
 
     other.m_VAO = 0;
     other.m_VBO = 0;
@@ -43,7 +43,7 @@ Player& Player::operator=(Player&& other)
     m_Camera = other.m_Camera;
     m_Position = other.m_Position;
     m_Shader = std::move(other.m_Shader);
-    m_Texture = std::move(other.m_Texture);
+    m_Animation = std::move(other.m_Animation);
     m_Tiles = other.m_Tiles;
 
     m_VAO = other.m_VAO;
@@ -144,17 +144,20 @@ void Player::receiveEvent(const Event* event)
 
             m_Shader.bind();
 
-            m_Texture.bind();
-            m_Texture.activeTexture(GL_TEXTURE0);
+            m_Animation.bindTexture();
+            Texture2D::activeTexture(GL_TEXTURE0);
 
             m_Shader.setMat4("u_View", renderEvent->camera->getViewMatrix());
             m_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
 
             glm::mat4 model(1.0f);
             model = glm::translate(model, m_Position);
-            model = glm::scale(model, glm::vec3(m_Size.x, m_Size.y, 1.0));
+            model = glm::scale(model, glm::vec3(Tile::s_TileSize, Tile::s_TileSize * 2, 1.0));
 
             m_Shader.setMat4("u_Model", model);
+
+            m_Shader.setIVec2("u_Index", m_Animation.getIndex());
+            m_Shader.setIVec2("u_TextureSize", m_Animation.getDimensions());
 
             glBindVertexArray(m_VAO);
             glDrawArrays(GL_TRIANGLES, 0, m_VertexCount);
@@ -236,5 +239,7 @@ void Player::setupPlayerData()
     glBindVertexArray(0);
 
     m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
-    m_Texture.compileFromPath("res/textures/Temp.png");
+
+    m_Animation =
+        Animation<PlayerAnimations>("res/textures/Tilemap.png", 32, 64, &PlayerAnimationToVec);
 }
