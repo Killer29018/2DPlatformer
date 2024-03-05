@@ -4,12 +4,17 @@
 #include <optional>
 #include <type_traits>
 
+#include <map>
+
 #include "resources/TextureMap.hpp"
 
 template<typename T>
 concept EnumType = std::is_enum<T>::value;
 
-template<EnumType animation>
+#define TEMPLATE template<EnumType animation>
+#define CLASS_DEF Animation<animation>
+
+TEMPLATE
 class Animation
 {
   public:
@@ -33,7 +38,11 @@ class Animation
     glm::ivec2 getIndex() { return m_NameToVec->at(m_CurrentAnimation); };
 
     void setAnimation(animation anim) { m_CurrentAnimation = anim; }
-    void addAnimationSequence(AnimFunc func);
+    void addAnimationSequence(const std::vector<animation>& animations, float animationTime);
+    void addConditionalTransition(animation current, animation to,
+                                  std::function<bool(animation, float)> predicate);
+    void addConditionalTransition(const std::vector<animation>& current, animation to,
+                                  std::function<bool(animation, float)> predicate);
 
     void update(float dt);
 
@@ -46,66 +55,109 @@ class Animation
 
     animation m_CurrentAnimation;
 
-    std::vector<AnimFunc> m_Functions;
+    std::multimap<animation, AnimFunc> m_Animations;
 };
 
 /* Definitions */
 
-template<EnumType T>
-Animation<T>::Animation(const char* texturePath, uint32_t tileWidth, uint32_t tileHeight,
-                        const std::unordered_map<T, glm::ivec2>* nameToVec)
+TEMPLATE
+CLASS_DEF::Animation(const char* texturePath, uint32_t tileWidth, uint32_t tileHeight,
+                     const std::unordered_map<animation, glm::ivec2>* nameToVec)
     : m_NameToVec(nameToVec)
 {
     init(texturePath, tileWidth, tileHeight);
 }
 
-template<EnumType T>
-void Animation<T>::init(const char* texturePath, uint32_t tileWidth, uint32_t tileHeight)
-{
-    m_TextureMap.compileFromPath(texturePath, tileWidth, tileHeight);
-}
-
-template<EnumType T>
-Animation<T>::Animation(Animation&& other)
+TEMPLATE
+CLASS_DEF::Animation(Animation&& other)
 {
     m_TextureMap = std::move(other.m_TextureMap);
     m_NameToVec = other.m_NameToVec;
-    m_Functions = other.m_Functions;
+    m_Animations = other.m_Animations;
     m_CurrentAnimation = other.m_CurrentAnimation;
 
     other.m_NameToVec = nullptr;
-    other.m_Functions.clear();
+    other.m_Animations.clear();
 }
 
-template<EnumType T>
-Animation<T>& Animation<T>::operator=(Animation&& other)
+TEMPLATE
+CLASS_DEF& CLASS_DEF::operator=(Animation&& other)
 {
     m_TextureMap = std::move(other.m_TextureMap);
     m_NameToVec = other.m_NameToVec;
-    m_Functions = other.m_Functions;
+    m_Animations = other.m_Animations;
     m_CurrentAnimation = other.m_CurrentAnimation;
 
     other.m_NameToVec = nullptr;
-    other.m_Functions.clear();
+    other.m_Animations.clear();
 
     return *this;
 }
 
-template<EnumType T>
-void Animation<T>::addAnimationSequence(Animation::AnimFunc func)
+TEMPLATE
+void CLASS_DEF::addAnimationSequence(const std::vector<animation>& animations, float animationTime)
 {
-    m_Functions.push_back(func);
+    for (size_t i = 0; i < animations.size(); i++)
+    {
+        animation current = animations.at(i);
+        animation next = animations.at((i + 1) % animations.size());
+
+        m_Animations.insert(
+            std::make_pair(current, [next, animationTime](animation current, float timeElapsed) {
+                if (timeElapsed < animationTime) return std::make_pair(false, current);
+
+                return std::make_pair(true, next);
+            }));
+    }
 }
 
-template<EnumType T>
-void Animation<T>::update(float dt)
+TEMPLATE
+void CLASS_DEF::addConditionalTransition(
+    const std::vector<animation>& current, animation to,
+    std::function<bool(animation current, float timeElapsed)> predicate)
+{
+    for (auto i : current)
+    {
+        addConditionalTransition(i, to, predicate);
+    }
+}
+
+TEMPLATE
+void CLASS_DEF::addConditionalTransition(
+    animation current, animation to,
+    std::function<bool(animation current, float timeElapsed)> predicate)
+{
+    // Decompose current into bits
+    int mask = 1;
+    int intValue = static_cast<int>(current);
+    while (intValue != 0)
+    {
+        if ((intValue & mask) != 0)
+        {
+            animation splitAnimation = static_cast<animation>(intValue & mask);
+            m_Animations.insert(std::make_pair(
+                splitAnimation, [predicate, to](animation current, float timeElapsed) {
+                    if (predicate(current, timeElapsed))
+                        return std::make_pair(true, to);
+                    else
+                        return std::make_pair(false, current);
+                }));
+        }
+        intValue &= (~mask);
+        mask <<= 1;
+    }
+}
+
+TEMPLATE
+void CLASS_DEF::update(float dt)
 {
     static float currentTime = 0.0f;
     currentTime += dt;
 
-    for (auto func : m_Functions)
+    auto range = m_Animations.equal_range(m_CurrentAnimation);
+    for (auto it = range.first; it != range.second; it++)
     {
-        AnimReturn nextValue = func(m_CurrentAnimation, currentTime);
+        AnimReturn nextValue = it->second(m_CurrentAnimation, currentTime);
         if (nextValue.first)
         {
             currentTime = 0.0f;
@@ -114,3 +166,12 @@ void Animation<T>::update(float dt)
         }
     }
 }
+
+TEMPLATE
+void CLASS_DEF::init(const char* texturePath, uint32_t tileWidth, uint32_t tileHeight)
+{
+    m_TextureMap.compileFromPath(texturePath, tileWidth, tileHeight);
+}
+
+#undef CLAS_DEFS
+#undef TEMPLATE

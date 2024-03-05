@@ -245,76 +245,60 @@ void Player::setupPlayerData()
 
     m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
 
-    m_Animation =
-        Animation<PlayerAnimations>("res/textures/Temp2.png", 32, 64, &PlayerAnimationToVec);
+    m_Animation = Animation<PlayerAnimations>("res/textures/PlayerTilemap.png", 32, 64,
+                                              &PlayerAnimationToVec);
 
-    m_Animation.setAnimation(PlayerAnimations::IDLE);
+    m_Animation.setAnimation(PlayerAnimations::IDLE_1);
 
     addAnimations();
 }
 
 void Player::addAnimations()
 {
-    constexpr float ANIM_TIME = 0.5f;
+    constexpr float ANIM_IDLE_TIME = 0.5f;
+    constexpr float ANIM_RUN_TIME = 0.1f;
+    // constexpr float ANIM_IDLE_TIME = 1.0f;
+    // constexpr float ANIM_RUN_TIME = 1.0f;
 
-    m_Animation.addAnimationSequence([](PlayerAnimations current, float time) {
-        if (time < ANIM_TIME) return std::make_pair(false, PlayerAnimations::INVALID);
+    m_Animation.addAnimationSequence({ PlayerAnimations::IDLE_1, PlayerAnimations::IDLE_2,
+                                       PlayerAnimations::IDLE_3, PlayerAnimations::IDLE_4 },
+                                     ANIM_IDLE_TIME);
 
-        PlayerAnimations next = PlayerAnimations::INVALID;
-        switch (current)
-        {
-        case PlayerAnimations::IDLE:
-            next = PlayerAnimations::IDLE2;
-            break;
-        case PlayerAnimations::IDLE2:
-            next = PlayerAnimations::IDLE;
-            break;
+    m_Animation.addAnimationSequence({ PlayerAnimations::RUN_RIGHT_1, PlayerAnimations::RUN_RIGHT_2,
+                                       PlayerAnimations::RUN_RIGHT_3,
+                                       PlayerAnimations::RUN_RIGHT_4 },
+                                     ANIM_RUN_TIME);
 
-        case PlayerAnimations::RUN_RIGHT_1:
-            next = PlayerAnimations::RUN_RIGHT_2;
-            break;
-        case PlayerAnimations::RUN_RIGHT_2:
-            next = PlayerAnimations::RUN_RIGHT_1;
-            break;
+    m_Animation.addAnimationSequence({ PlayerAnimations::RUN_LEFT_1, PlayerAnimations::RUN_LEFT_2,
+                                       PlayerAnimations::RUN_LEFT_3, PlayerAnimations::RUN_LEFT_4 },
+                                     ANIM_RUN_TIME);
 
-        case PlayerAnimations::RUN_LEFT_1:
-            next = PlayerAnimations::RUN_LEFT_2;
-            break;
-        case PlayerAnimations::RUN_LEFT_2:
-            next = PlayerAnimations::RUN_LEFT_1;
-            break;
+    m_Animation.addConditionalTransition(
+        PlayerAnimations::RUNNING, PlayerAnimations::IDLE_1,
+        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
+            if (acc.x == 0)
+            {
+                return true;
+            }
+            else
+                return false;
+        });
 
-        default:
-            next = current;
-            break;
-        }
-        return std::make_pair(true, next);
-    });
+    m_Animation.addConditionalTransition(
+        { PlayerAnimations::IDLE, PlayerAnimations::RUN_LEFT }, PlayerAnimations::RUN_RIGHT_1,
+        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
+            if (acc.x > 0)
+                return true;
+            else
+                return false;
+        });
 
-    m_Animation.addAnimationSequence([&acc = m_Acc](PlayerAnimations current, float time) {
-        if ((current == PlayerAnimations::IDLE || current == PlayerAnimations::IDLE2) && acc.x == 0)
-            return std::make_pair(false, PlayerAnimations::INVALID);
-        else if (acc.x == 0)
-            return std::make_pair(true, PlayerAnimations::IDLE);
-
-        PlayerAnimations next = PlayerAnimations::INVALID;
-        if (acc.x > 1 &&
-            (current != PlayerAnimations::RUN_RIGHT_1 && current != PlayerAnimations::RUN_RIGHT_2))
-        {
-            std::cout << "Run Right\n";
-            next = PlayerAnimations::RUN_RIGHT_1;
-        }
-        else if (acc.x < -1 && (current != PlayerAnimations::RUN_LEFT_1 &&
-                                current != PlayerAnimations::RUN_LEFT_2))
-        {
-            std::cout << "Run Left\n";
-            next = PlayerAnimations::RUN_LEFT_1;
-        }
-        else
-        {
-            return std::make_pair(false, PlayerAnimations::INVALID);
-        }
-
-        return std::make_pair(true, next);
-    });
+    m_Animation.addConditionalTransition(
+        { PlayerAnimations::IDLE, PlayerAnimations::RUN_RIGHT }, PlayerAnimations::RUN_LEFT_1,
+        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
+            if (acc.x < 0)
+                return true;
+            else
+                return false;
+        });
 }

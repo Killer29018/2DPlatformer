@@ -10,24 +10,7 @@
 #include <glm/glm.hpp>
 #include <unordered_map>
 
-enum class PlayerAnimations {
-    INVALID,
-    IDLE,
-    IDLE2,
-    RUN_RIGHT_1,
-    RUN_RIGHT_2,
-    RUN_LEFT_1,
-    RUN_LEFT_2
-};
-const std::unordered_map<PlayerAnimations, glm::ivec2> PlayerAnimationToVec = {
-    {PlayerAnimations::INVALID,      { -1, -1 }},
-    { PlayerAnimations::IDLE,        { 0, 0 }  },
-    { PlayerAnimations::IDLE2,       { 1, 0 }  },
-    { PlayerAnimations::RUN_RIGHT_1, { 2, 0 }  },
-    { PlayerAnimations::RUN_RIGHT_2, { 3, 0 }  },
-    { PlayerAnimations::RUN_LEFT_1,  { 0, 1 }  },
-    { PlayerAnimations::RUN_LEFT_2,  { 1, 1 }  },
-};
+#include "PlayerAnimations.hpp"
 
 class Player : public EventObserver
 {
