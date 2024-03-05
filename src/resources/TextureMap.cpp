@@ -18,6 +18,10 @@ TextureMap::TextureMap(TextureMap&& other) : m_ID(other.m_ID)
 {
     other.m_ID.reset();
     m_EntireTexture = std::move(other.m_EntireTexture);
+
+    m_TileDimensions = other.m_TileDimensions;
+    m_TileSize = other.m_TileSize;
+    m_TotalSize = other.m_TotalSize;
 }
 
 TextureMap::~TextureMap()
@@ -35,6 +39,9 @@ TextureMap& TextureMap::operator=(TextureMap&& other)
 {
     m_ID = other.m_ID;
     m_EntireTexture = std::move(other.m_EntireTexture);
+    m_TileDimensions = other.m_TileDimensions;
+    m_TileSize = other.m_TileSize;
+    m_TotalSize = other.m_TotalSize;
 
     other.m_ID.reset();
 

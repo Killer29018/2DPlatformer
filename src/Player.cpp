@@ -2,13 +2,16 @@
 
 #include "GLFW/glfw3.h"
 #include "glad/gl.h"
+#include "glm/gtx/string_cast.hpp"
 
 #include "Animation.hpp"
 #include "events/Events.hpp"
+#include <any>
 #include <format>
 #include <iostream>
 
 #include <imgui.h>
+#include <utility>
 
 Player::Player() : m_Camera(nullptr) {}
 
@@ -17,8 +20,6 @@ Player::Player(Camera* camera, TileManager* tiles) : m_Camera(camera), m_Tiles(t
     m_Position = glm::vec3(0.0, 0.1, 0);
     m_Vel = glm::vec3(0, 0, 0);
     m_Acc = glm::vec3(0, 0, 0);
-
-    setupPlayerData();
 }
 
 Player::Player(Player&& other)
@@ -56,6 +57,8 @@ Player& Player::operator=(Player&& other)
     return *this;
 }
 
+void Player::init() { setupPlayerData(); }
+
 void Player::receiveEvent(const Event* event)
 {
     switch (event->getType())
@@ -78,6 +81,8 @@ void Player::receiveEvent(const Event* event)
     case EventType::Update:
         {
             UpdateEvent* updateEvent = (UpdateEvent*)event;
+
+            m_Animation.update(updateEvent->dt);
 
             m_Acc *= 0.3 * updateEvent->dt;
 
@@ -241,5 +246,75 @@ void Player::setupPlayerData()
     m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
 
     m_Animation =
-        Animation<PlayerAnimations>("res/textures/Tilemap.png", 32, 64, &PlayerAnimationToVec);
+        Animation<PlayerAnimations>("res/textures/Temp2.png", 32, 64, &PlayerAnimationToVec);
+
+    m_Animation.setAnimation(PlayerAnimations::IDLE);
+
+    addAnimations();
+}
+
+void Player::addAnimations()
+{
+    constexpr float ANIM_TIME = 0.5f;
+
+    m_Animation.addAnimationSequence([](PlayerAnimations current, float time) {
+        if (time < ANIM_TIME) return std::make_pair(false, PlayerAnimations::INVALID);
+
+        PlayerAnimations next = PlayerAnimations::INVALID;
+        switch (current)
+        {
+        case PlayerAnimations::IDLE:
+            next = PlayerAnimations::IDLE2;
+            break;
+        case PlayerAnimations::IDLE2:
+            next = PlayerAnimations::IDLE;
+            break;
+
+        case PlayerAnimations::RUN_RIGHT_1:
+            next = PlayerAnimations::RUN_RIGHT_2;
+            break;
+        case PlayerAnimations::RUN_RIGHT_2:
+            next = PlayerAnimations::RUN_RIGHT_1;
+            break;
+
+        case PlayerAnimations::RUN_LEFT_1:
+            next = PlayerAnimations::RUN_LEFT_2;
+            break;
+        case PlayerAnimations::RUN_LEFT_2:
+            next = PlayerAnimations::RUN_LEFT_1;
+            break;
+
+        default:
+            next = current;
+            break;
+        }
+        return std::make_pair(true, next);
+    });
+
+    m_Animation.addAnimationSequence([&acc = m_Acc](PlayerAnimations current, float time) {
+        if ((current == PlayerAnimations::IDLE || current == PlayerAnimations::IDLE2) && acc.x == 0)
+            return std::make_pair(false, PlayerAnimations::INVALID);
+        else if (acc.x == 0)
+            return std::make_pair(true, PlayerAnimations::IDLE);
+
+        PlayerAnimations next = PlayerAnimations::INVALID;
+        if (acc.x > 1 &&
+            (current != PlayerAnimations::RUN_RIGHT_1 && current != PlayerAnimations::RUN_RIGHT_2))
+        {
+            std::cout << "Run Right\n";
+            next = PlayerAnimations::RUN_RIGHT_1;
+        }
+        else if (acc.x < -1 && (current != PlayerAnimations::RUN_LEFT_1 &&
+                                current != PlayerAnimations::RUN_LEFT_2))
+        {
+            std::cout << "Run Left\n";
+            next = PlayerAnimations::RUN_LEFT_1;
+        }
+        else
+        {
+            return std::make_pair(false, PlayerAnimations::INVALID);
+        }
+
+        return std::make_pair(true, next);
+    });
 }

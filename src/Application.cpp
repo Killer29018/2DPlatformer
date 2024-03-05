@@ -65,7 +65,9 @@ void Application::initialize()
         m_Window.getSize(), {0.0f, 0.0f, 1000.0f}
     };
 
-    m_Player = Player(&m_Camera, &m_TileManager);
+    // m_Player = Player(&m_Camera, &m_TileManager);
+    m_Player = { &m_Camera, &m_TileManager };
+    m_Player.init();
 
     m_Shader.compileFromPath("res/shaders/basic.vert.glsl", "res/shaders/basic.frag.glsl");
 
