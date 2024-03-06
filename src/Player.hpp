@@ -56,6 +56,8 @@ class Player : public EventObserver
     glm::vec3 m_worldRight = { 1.0, 0.0, 0.0 };
     glm::vec3 m_worldUp = { 0.0, 1.0, 0.0 };
 
+    bool m_FacingRight = true;
+
     Camera* m_Camera;
     TileManager* m_Tiles;
 

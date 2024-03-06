@@ -3,5 +3,6 @@ bin/**
 .cache/**
 
 *.kra~
+*.kra-autosave.*
 *.png~
 imgui.ini

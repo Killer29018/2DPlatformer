@@ -1,6 +1,7 @@
 #include "Player.hpp"
 
 #include "GLFW/glfw3.h"
+#include "PlayerAnimations.hpp"
 #include "glad/gl.h"
 #include "glm/gtx/string_cast.hpp"
 
@@ -156,13 +157,17 @@ void Player::receiveEvent(const Event* event)
             m_Shader.setMat4("u_Projection", renderEvent->camera->getProjectionMatrix());
 
             glm::mat4 model(1.0f);
+
+            glm::vec3 size{ Tile::s_TileSize, Tile::s_TileSize * 2, 1.0 };
+
             model = glm::translate(model, m_Position);
-            model = glm::scale(model, glm::vec3(Tile::s_TileSize, Tile::s_TileSize * 2, 1.0));
+            model = glm::scale(model, size);
 
             m_Shader.setMat4("u_Model", model);
 
             m_Shader.setIVec2("u_Index", m_Animation.getIndex());
             m_Shader.setIVec2("u_TextureSize", m_Animation.getDimensions());
+            m_Shader.setInt("u_FlipTextureX", !m_FacingRight);
 
             glBindVertexArray(m_VAO);
             glDrawArrays(GL_TRIANGLES, 0, m_VertexCount);
@@ -255,8 +260,8 @@ void Player::setupPlayerData()
 
 void Player::addAnimations()
 {
-    constexpr float ANIM_IDLE_TIME = 0.5f;
-    constexpr float ANIM_RUN_TIME = 0.1f;
+    constexpr float ANIM_IDLE_TIME = 0.2f;
+    constexpr float ANIM_RUN_TIME = 0.05f;
     // constexpr float ANIM_IDLE_TIME = 1.0f;
     // constexpr float ANIM_RUN_TIME = 1.0f;
 
@@ -277,28 +282,34 @@ void Player::addAnimations()
         PlayerAnimations::RUNNING, PlayerAnimations::IDLE_1,
         [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
             if (acc.x == 0 || vel.x == 0)
-            {
-                return true;
-            }
-            else
-                return false;
-        });
-
-    m_Animation.addConditionalTransition(
-        { PlayerAnimations::IDLE, PlayerAnimations::RUN_LEFT }, PlayerAnimations::RUN_RIGHT_1,
-        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
-            if (acc.x > 0 && vel.x > 0)
                 return true;
             else
                 return false;
         });
 
-    m_Animation.addConditionalTransition(
-        { PlayerAnimations::IDLE, PlayerAnimations::RUN_RIGHT }, PlayerAnimations::RUN_LEFT_1,
-        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
-            if (acc.x < 0 && vel.x < 0)
-                return true;
-            else
-                return false;
-        });
+    m_Animation.addConditionalTransition({ PlayerAnimations::IDLE, PlayerAnimations::RUN_LEFT },
+                                         PlayerAnimations::RUN_RIGHT_1,
+                                         [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](
+                                             PlayerAnimations current, float timeElapsed) {
+                                             if (acc.x > 0 && vel.x > 0)
+                                             {
+                                                 facingRight = true;
+                                                 return true;
+                                             }
+                                             else
+                                                 return false;
+                                         });
+
+    m_Animation.addConditionalTransition({ PlayerAnimations::IDLE, PlayerAnimations::RUN_RIGHT },
+                                         PlayerAnimations::RUN_LEFT_1,
+                                         [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](
+                                             PlayerAnimations current, float timeElapsed) {
+                                             if (acc.x < 0 && vel.x < 0)
+                                             {
+                                                 facingRight = false;
+                                                 return true;
+                                             }
+                                             else
+                                                 return false;
+                                         });
 }

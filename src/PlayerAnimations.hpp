@@ -33,17 +33,17 @@ const std::unordered_map<PlayerAnimations, glm::ivec2> PlayerAnimationToVec = {
     { PlayerAnimations::IDLE_1,      { 0, 0 }  },
     { PlayerAnimations::IDLE_2,      { 1, 0 }  },
     { PlayerAnimations::IDLE_3,      { 2, 0 }  },
-    { PlayerAnimations::IDLE_4,      { 1, 0 }  },
+    { PlayerAnimations::IDLE_4,      { 3, 0 }  },
 
-    { PlayerAnimations::RUN_RIGHT_1, { 0, 1 }  },
-    { PlayerAnimations::RUN_RIGHT_2, { 1, 1 }  },
-    { PlayerAnimations::RUN_RIGHT_3, { 2, 1 }  },
-    { PlayerAnimations::RUN_RIGHT_4, { 1, 1 }  },
+    { PlayerAnimations::RUN_RIGHT_1, { 4, 0 }  },
+    { PlayerAnimations::RUN_RIGHT_2, { 5, 0 }  },
+    { PlayerAnimations::RUN_RIGHT_3, { 6, 0 }  },
+    { PlayerAnimations::RUN_RIGHT_4, { 7, 0 }  },
 
-    { PlayerAnimations::RUN_LEFT_1,  { 0, 2 }  },
-    { PlayerAnimations::RUN_LEFT_2,  { 1, 2 }  },
-    { PlayerAnimations::RUN_LEFT_3,  { 2, 2 }  },
-    { PlayerAnimations::RUN_LEFT_4,  { 1, 2 }  },
+    { PlayerAnimations::RUN_LEFT_1,  { 4, 0 }  },
+    { PlayerAnimations::RUN_LEFT_2,  { 5, 0 }  },
+    { PlayerAnimations::RUN_LEFT_3,  { 6, 0 }  },
+    { PlayerAnimations::RUN_LEFT_4,  { 7, 0 }  },
 };
 
 #undef INCREMENT
