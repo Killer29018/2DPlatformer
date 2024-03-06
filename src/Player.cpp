@@ -275,8 +275,8 @@ void Player::addAnimations()
 
     m_Animation.addConditionalTransition(
         PlayerAnimations::RUNNING, PlayerAnimations::IDLE_1,
-        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
-            if (acc.x == 0)
+        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
+            if (acc.x == 0 || vel.x == 0)
             {
                 return true;
             }
@@ -286,8 +286,8 @@ void Player::addAnimations()
 
     m_Animation.addConditionalTransition(
         { PlayerAnimations::IDLE, PlayerAnimations::RUN_LEFT }, PlayerAnimations::RUN_RIGHT_1,
-        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
-            if (acc.x > 0)
+        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
+            if (acc.x > 0 && vel.x > 0)
                 return true;
             else
                 return false;
@@ -295,8 +295,8 @@ void Player::addAnimations()
 
     m_Animation.addConditionalTransition(
         { PlayerAnimations::IDLE, PlayerAnimations::RUN_RIGHT }, PlayerAnimations::RUN_LEFT_1,
-        [&acc = m_Acc](PlayerAnimations current, float timeElapsed) {
-            if (acc.x < 0)
+        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
+            if (acc.x < 0 && vel.x < 0)
                 return true;
             else
                 return false;
