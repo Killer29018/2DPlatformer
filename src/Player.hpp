@@ -43,7 +43,7 @@ class Player : public EventObserver
     uint32_t m_VBO;
     uint32_t m_VertexCount;
 
-    glm::vec2 m_Size{ Tile::s_TileSize * 0.9, Tile::s_TileSize * 1.9 };
+    glm::vec2 m_SizeScale{ 1.2 };
 
     float m_Damping = 6.0f;
 

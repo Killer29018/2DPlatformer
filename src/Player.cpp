@@ -123,8 +123,8 @@ void Player::receiveEvent(const Event* event)
             m_Vel += m_Acc * updateEvent->dt;
             m_Vel -= m_Vel * m_Damping * updateEvent->dt;
 
-            glm::vec4 positionVelocity =
-                m_Tiles->checkCollision(m_Position, m_Size, m_Vel * updateEvent->dt);
+            glm::vec4 positionVelocity = m_Tiles->checkCollision(
+                m_Position, Tile::s_TileSize * m_SizeScale, m_Vel * updateEvent->dt);
 
             if (m_Position.y == positionVelocity.y)
             {
@@ -158,7 +158,8 @@ void Player::receiveEvent(const Event* event)
 
             glm::mat4 model(1.0f);
 
-            glm::vec3 size{ Tile::s_TileSize, Tile::s_TileSize * 2, 1.0 };
+            glm::vec2 sizeXY = Tile::s_TileSize * m_SizeScale;
+            glm::vec3 size{ sizeXY, 1.0 };
 
             model = glm::translate(model, m_Position);
             model = glm::scale(model, size);
@@ -250,7 +251,7 @@ void Player::setupPlayerData()
 
     m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
 
-    m_Animation = Animation<PlayerAnimations>("res/textures/PlayerTilemap.png", 32, 64,
+    m_Animation = Animation<PlayerAnimations>("res/textures/PlayerTilemap.png", 32, 32,
                                               &PlayerAnimationToVec);
 
     m_Animation.setAnimation(PlayerAnimations::IDLE_1);
@@ -261,7 +262,7 @@ void Player::setupPlayerData()
 void Player::addAnimations()
 {
     constexpr float ANIM_IDLE_TIME = 0.2f;
-    constexpr float ANIM_RUN_TIME = 0.05f;
+    constexpr float ANIM_RUN_TIME = 0.15f;
     // constexpr float ANIM_IDLE_TIME = 1.0f;
     // constexpr float ANIM_RUN_TIME = 1.0f;
 

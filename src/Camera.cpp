@@ -17,7 +17,7 @@ glm::mat4 Camera::getViewMatrix() const
 glm::mat4 Camera::getProjectionMatrix() const
 {
     float aspectRatio = (float)m_WindowSize.x / (float)m_WindowSize.y;
-    float halfHeight = 1.f;
+    float halfHeight = 0.9f;
     float halfWidth = halfHeight * aspectRatio;
     return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, m_NearClipping,
                       m_FarClipping);
