@@ -37,7 +37,7 @@ class Player : public EventObserver
     glm::vec3 m_Gravity = { 0.0, -14, 0.0 };
 
     Shader m_Shader;
-    Animation<PlayerAnimations> m_Animation;
+    Animation<PlayerAnimationState> m_Animation;
 
     uint32_t m_VAO;
     uint32_t m_VBO;

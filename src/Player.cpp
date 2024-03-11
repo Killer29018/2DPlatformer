@@ -251,10 +251,10 @@ void Player::setupPlayerData()
 
     m_Shader.compileFromPath("res/shaders/player.vert.glsl", "res/shaders/player.frag.glsl");
 
-    m_Animation = Animation<PlayerAnimations>("res/textures/PlayerTilemap.png", 32, 32,
-                                              &PlayerAnimationToVec);
+    m_Animation = Animation<PlayerAnimationState>("res/textures/PlayerTilemap.png", 32, 32,
+                                                  &PlayerAnimationStateToFrame);
 
-    m_Animation.setAnimation(PlayerAnimations::IDLE_1);
+    m_Animation.setState(PlayerAnimationState::IDLE);
 
     addAnimations();
 }
@@ -266,51 +266,47 @@ void Player::addAnimations()
     // constexpr float ANIM_IDLE_TIME = 1.0f;
     // constexpr float ANIM_RUN_TIME = 1.0f;
 
-    m_Animation.addAnimationSequence({ PlayerAnimations::IDLE_1, PlayerAnimations::IDLE_2,
-                                       PlayerAnimations::IDLE_3, PlayerAnimations::IDLE_4 },
-                                     ANIM_IDLE_TIME);
+    m_Animation.addAnimationSequence(PlayerAnimationState::IDLE, ANIM_IDLE_TIME);
 
-    m_Animation.addAnimationSequence({ PlayerAnimations::RUN_RIGHT_1, PlayerAnimations::RUN_RIGHT_2,
-                                       PlayerAnimations::RUN_RIGHT_3,
-                                       PlayerAnimations::RUN_RIGHT_4 },
-                                     ANIM_RUN_TIME);
+    m_Animation.addAnimationSequence(PlayerAnimationState::RUN_RIGHT, ANIM_RUN_TIME);
 
-    m_Animation.addAnimationSequence({ PlayerAnimations::RUN_LEFT_1, PlayerAnimations::RUN_LEFT_2,
-                                       PlayerAnimations::RUN_LEFT_3, PlayerAnimations::RUN_LEFT_4 },
-                                     ANIM_RUN_TIME);
+    m_Animation.addAnimationSequence(PlayerAnimationState::RUN_LEFT, ANIM_RUN_TIME);
 
     m_Animation.addConditionalTransition(
-        PlayerAnimations::RUNNING, PlayerAnimations::IDLE_1,
-        [&acc = m_Acc, &vel = m_Vel](PlayerAnimations current, float timeElapsed) {
+        { PlayerAnimationState::RUN_RIGHT, PlayerAnimationState::RUN_LEFT },
+        PlayerAnimationState::IDLE,
+        [&acc = m_Acc, &vel = m_Vel](PlayerAnimationState current, float timeElapsed) {
             if (acc.x == 0 || vel.x == 0)
                 return true;
             else
                 return false;
         });
 
-    m_Animation.addConditionalTransition({ PlayerAnimations::IDLE, PlayerAnimations::RUN_LEFT },
-                                         PlayerAnimations::RUN_RIGHT_1,
-                                         [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](
-                                             PlayerAnimations current, float timeElapsed) {
-                                             if (acc.x > 0 && vel.x > 0)
-                                             {
-                                                 facingRight = true;
-                                                 return true;
-                                             }
-                                             else
-                                                 return false;
-                                         });
+    m_Animation.addConditionalTransition(
+        { PlayerAnimationState::IDLE, PlayerAnimationState::RUN_LEFT },
+        PlayerAnimationState::RUN_RIGHT,
+        [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](PlayerAnimationState current,
+                                                                   float timeElapsed) {
+            if (acc.x > 0 && vel.x > 0)
+            {
+                facingRight = true;
+                return true;
+            }
+            else
+                return false;
+        });
 
-    m_Animation.addConditionalTransition({ PlayerAnimations::IDLE, PlayerAnimations::RUN_RIGHT },
-                                         PlayerAnimations::RUN_LEFT_1,
-                                         [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](
-                                             PlayerAnimations current, float timeElapsed) {
-                                             if (acc.x < 0 && vel.x < 0)
-                                             {
-                                                 facingRight = false;
-                                                 return true;
-                                             }
-                                             else
-                                                 return false;
-                                         });
+    m_Animation.addConditionalTransition(
+        { PlayerAnimationState::IDLE, PlayerAnimationState::RUN_RIGHT },
+        PlayerAnimationState::RUN_LEFT,
+        [&acc = m_Acc, &vel = m_Vel, &facingRight = m_FacingRight](PlayerAnimationState current,
+                                                                   float timeElapsed) {
+            if (acc.x < 0 && vel.x < 0)
+            {
+                facingRight = false;
+                return true;
+            }
+            else
+                return false;
+        });
 }
