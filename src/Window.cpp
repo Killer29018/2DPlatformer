@@ -71,6 +71,15 @@ GLFWwindow* Window::getWindow()
 
 const glm::ivec2& Window::getSize() { return m_Size; }
 
+const glm::vec2 Window::getAspectSize()
+{
+    float aspectRatio = (float)m_Size.x / (float)m_Size.y;
+    float halfHeight = 0.9f;
+    float halfWidth = halfHeight * aspectRatio;
+
+    return { halfWidth, halfHeight };
+}
+
 void Window::receiveEvent(const Event* event)
 {
     switch (event->getType())

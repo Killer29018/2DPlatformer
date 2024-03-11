@@ -35,12 +35,8 @@ void MapManager::receiveEvent(const Event* event)
 
             mousePos = mousePercent;
 
-            glm::ivec2 windowSize = m_Window->getSize();
-            float aspectRatio = (float)windowSize.x / (float)windowSize.y;
-            float halfHeight = 1.f;
-            float halfWidth = aspectRatio * halfHeight;
-
-            glm::vec2 halfSize = { halfWidth, -halfHeight };
+            glm::vec2 halfSize = m_Window->getAspectSize();
+            halfSize.y *= -1;
 
             mousePos *= (halfSize * 2.f);
             mousePos -= halfSize;

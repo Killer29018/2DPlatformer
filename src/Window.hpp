@@ -36,6 +36,7 @@ class Window : public EventDispatcher, public EventObserver
 
     GLFWwindow* getWindow();
     const glm::ivec2& getSize();
+    const glm::vec2 getAspectSize();
 
     void setInputMode(int32_t mode, int32_t value);
 

@@ -262,7 +262,7 @@ void Player::setupPlayerData()
 void Player::addAnimations()
 {
     constexpr float ANIM_IDLE_TIME = 0.2f;
-    constexpr float ANIM_RUN_TIME = 0.15f;
+    constexpr float ANIM_RUN_TIME = 0.05f;
     // constexpr float ANIM_IDLE_TIME = 1.0f;
     // constexpr float ANIM_RUN_TIME = 1.0f;
 

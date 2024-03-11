@@ -62,10 +62,9 @@ void Application::receiveEvent(const Event* event)
 void Application::initialize()
 {
     m_Camera = Camera{
-        m_Window.getSize(), {0.0f, 0.0f, 1000.0f}
+        &m_Window, {0.0f, 0.0f, 1000.0f}
     };
 
-    // m_Player = Player(&m_Camera, &m_TileManager);
     m_Player = { &m_Camera, &m_TileManager };
     m_Player.init();
 
@@ -75,7 +74,6 @@ void Application::initialize()
     m_MapManager = MapManager(&m_Player, &m_TileManager, &m_Window);
 
     m_Window.attach(this);
-    m_Window.attach(&m_Camera);
     m_Window.attach(&m_Player);
     m_Window.attach(&m_MapManager);
     m_Window.attach(&m_ImGuiManager);

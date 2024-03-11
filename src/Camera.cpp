@@ -2,12 +2,11 @@
 
 #include "events/Events.hpp"
 
-Camera::Camera() : m_WindowSize({ 0, 0 }), m_Position({ 0.0f, 0.0f, 0.0f }) {}
+#include <iostream>
 
-Camera::Camera(glm::ivec2 windowSize, glm::vec3 position)
-    : m_WindowSize(windowSize), m_Position(position)
-{
-}
+Camera::Camera() : m_Position({ 0.0f, 0.0f, 0.0f }), m_Window(nullptr) {}
+
+Camera::Camera(Window* window, glm::vec3 position) : m_Position(position), m_Window(window) {}
 
 glm::mat4 Camera::getViewMatrix() const
 {
@@ -16,26 +15,7 @@ glm::mat4 Camera::getViewMatrix() const
 
 glm::mat4 Camera::getProjectionMatrix() const
 {
-    float aspectRatio = (float)m_WindowSize.x / (float)m_WindowSize.y;
-    float halfHeight = 0.9f;
-    float halfWidth = halfHeight * aspectRatio;
-    return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, m_NearClipping,
+    glm::vec2 halfSize = m_Window->getAspectSize();
+    return glm::ortho(-halfSize.x, halfSize.x, -halfSize.y, halfSize.y, m_NearClipping,
                       m_FarClipping);
-}
-
-void Camera::receiveEvent(const Event* event)
-{
-    switch (event->getType())
-    {
-    case EventType::WindowResize:
-        {
-            const WindowResizeEvent* rEvent = reinterpret_cast<const WindowResizeEvent*>(event);
-
-            m_WindowSize = glm::ivec2{ rEvent->newWidth, rEvent->newHeight };
-
-            break;
-        }
-    default:
-        break;
-    }
 }
